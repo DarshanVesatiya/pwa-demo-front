@@ -8,20 +8,39 @@ const Checkout = (): JSX.Element => {
   const cartInfo = useAppSelector((state) => state.cart);
   const itemsList = useAppSelector((state) => state.items.items);
   const itemsListLoading = useAppSelector((state) => state.items.loading);
+  const userId = useAppSelector((state) => state.user._id);
 
   const dispatch = useAppDispatch();
 
   const completeCheckout = () => {
     if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      addSyncUpdateCartItems('1', { cartId: 1, info: cartInfo });
+      addSyncUpdateCartItems('1', { cartId: 1, info: {userId: userId, ...cartInfo} }).then(() => {
+        navigator.serviceWorker.ready.then((registration: any) => {
+          registration.sync.register('sync-cart');
+        })
+      });
     } else {
-      fetch('http://localhost:8081/order', {
+      let itemsArr: any = [];
+      cartInfo.items.map((ele) => {
+        itemsArr.push({
+          itemId: ele.itemId,
+          quantity: ele.qty
+        });
+      });
+      const data = {
+        items: itemsArr,
+        totalAmount: cartInfo.totalAmount,
+        status: "Accepted",
+        address: cartInfo.address
+      }
+
+      fetch(`http://localhost:8080/v1/user/${userId}/order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(cartInfo.items),
+        body: JSON.stringify(data),
       }).
       then((response) => response.json())
       .then(() => {

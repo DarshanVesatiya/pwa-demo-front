@@ -19,7 +19,7 @@ interface cartState {
 // Define the initial state using that type
 const initialState: cartState = {
   items: [],
-  address: '',
+  address: 'Test Set 42 at Test Stadium',
   totalAmount: 0
 }
 

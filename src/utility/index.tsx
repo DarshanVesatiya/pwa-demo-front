@@ -14,6 +14,10 @@ const dbPromise = openDB('DummyAPK', 2, {
       // The 'id' property of the object will be the key.
       keyPath: 'userIndex',
     });
+    db.createObjectStore('notificationInfo', {
+      // The 'id' property of the object will be the key.
+      keyPath: 'Index',
+    });
   },
 });
 

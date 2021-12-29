@@ -58,13 +58,13 @@ export function register(config?: Config) {
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
         // used to sync cart
-        navigator.serviceWorker.ready.then((registration: any) => {
-          console.log(
-            'This web app is being served cache-first by a service ' +
-              'worker. To learn more, visit https://cra.link/PWA'
-          );
-          registration.sync.register('sync-cart');
-        });
+        // navigator.serviceWorker.ready.then((registration: any) => {
+        //   console.log(
+        //     'This web app is being served cache-first by a service ' +
+        //       'worker. To learn more, visit https://cra.link/PWA'
+        //   );
+        //   registration.sync.register('sync-cart');
+        // });
 
         // used for push notification
         var reg: any;

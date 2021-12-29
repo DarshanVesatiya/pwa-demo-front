@@ -115,13 +115,27 @@ self.addEventListener('sync', (event: any) => {
       getSyncCartItems().then((syncData: any) => {
         console.log('syncData =========> ', syncData);
         if (syncData.length === 1) {
-          fetch('http://localhost:8081/order', {
+          let itemsArr: any = [];
+          syncData[0].info.items.map((ele: any) => {
+            itemsArr.push({
+              itemId: ele.itemId,
+              quantity: ele.qty
+            });
+          });
+          const data = {
+            items: itemsArr,
+            totalAmount: syncData[0].info.totalAmount,
+            status: "Accepted",
+            address: syncData[0].info.address
+          }
+
+          fetch(`http://localhost:8080/v1/user/${syncData[0].info.userId}/order`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: JSON.stringify(syncData[0].info),
+            body: JSON.stringify(data),
           }).
           then((response) => response.json())
           .then(() => {
@@ -129,8 +143,12 @@ self.addEventListener('sync', (event: any) => {
             deleteSyncCartItem(syncData[0].cartId);
 
             // delete cart
-            const dispatch = useAppDispatch();
-            dispatch(resetCart());
+            const channel = new BroadcastChannel('sw-messages');
+            channel.postMessage({
+              msg: 'orderplaced'
+            });
+            // const dispatch = useAppDispatch();
+            // dispatch(resetCart());
             getCartItems().then((data) => {
               if(data.length) {
                 data.forEach((item) => {
@@ -139,9 +157,9 @@ self.addEventListener('sync', (event: any) => {
               }
             });
           })
-          .catch(() => {
+          .catch((err) => {
             // issue with place order show error toast
-            console.log('error 2');
+            console.log('error 2', err);
           });
         }
       }).catch(() => {

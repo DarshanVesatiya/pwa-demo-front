@@ -17,7 +17,7 @@ import ItemList from './components/ItemList';
 import { getCartItems, getMobileInfo } from './utility';
 import { useAppSelector, useAppDispatch } from "./redux/hooks";
 import { addList } from "./redux/itemSlice";
-import { initializeCart } from "./redux/cartSlice";
+import { initializeCart, resetCart } from "./redux/cartSlice";
 import { updateInfo } from "./redux/userSlice";
 import { getSuggestedQuery } from "@testing-library/react";
 
@@ -28,6 +28,11 @@ function App() {
   const [loading, setLoading] = useState(true);
   const mobileNumber = useAppSelector((state) => state.user.mobileNumber);
   const [installable, setInstallable] = useState(false);
+  const channel = new BroadcastChannel('sw-messages');
+  channel.addEventListener('message', event => {
+     console.log('Received', event.data);
+     dispatch(resetCart());
+  });
 
   useEffect(() => {
     fetchList();
@@ -37,7 +42,6 @@ function App() {
   const getUser = () => {
     try {
       getMobileInfo().then((userData) => {
-        console.log('userData ======> ', userData);
         if (userData !== undefined) {
           dispatch(updateInfo(userData));
         } else {
