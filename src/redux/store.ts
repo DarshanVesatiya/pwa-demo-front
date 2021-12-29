@@ -1,17 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 
-import counterReducer from './counterSlice';
 import userReducer from './userSlice';
 import cartReducer from './cartSlice';
+import itemReducer from './itemSlice';
 
 export const store = configureStore({
-  // preloadedState: {
-
-  // },
   reducer: {
     cart: cartReducer,
-    counter: counterReducer,
     user: userReducer,
+    items: itemReducer,
   },
 })
 

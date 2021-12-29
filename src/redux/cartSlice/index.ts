@@ -1,4 +1,6 @@
-import { createSlice, PayloadAction, current } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
+
+import { addUpdateCartItems, deleteCartItem } from '../../utility';
 import type { RootState } from '../store'
 
 interface cartItem {
@@ -25,9 +27,12 @@ export const cartSlice = createSlice({
   name: 'cartState',
   initialState,
   reducers: {
+    initializeCart: (state, action: PayloadAction<{items: cartItem[], totalAmount: number}>) => {
+      state.totalAmount = action.payload.totalAmount;
+      state.items = action.payload.items;
+    },
     updateCart: (state, action: PayloadAction<{_id: string, price: number}>) => {
       let currentState = JSON.parse(JSON.stringify(current(state)));
-      console.log('currentState ======> ', currentState);
       const { _id, price } = action.payload;
       let newItem = true;
       let totalAmount = 0;
@@ -39,7 +44,6 @@ export const cartSlice = createSlice({
             currentState.items[i].qty += 1;
           }
           totalAmount += currentState.items[i].qty * currentState.items[i].price;
-          console.log('totalAmount1 =====> ', totalAmount);
         }
       }
       
@@ -50,26 +54,23 @@ export const cartSlice = createSlice({
           price: price
         });
         totalAmount += price;
-        console.log('totalAmount2 =====> ', totalAmount);
       }
       state.totalAmount = totalAmount;
       state.items = currentState.items;
-      
+
+      currentState.items.forEach((item: any) => {
+        deleteCartItem(item.itemId);
+        addUpdateCartItems(item.itemId, item);
+      });
+
+    },
+    deleteCart: (state, action: PayloadAction<{_id: string}>) => {
+      deleteCartItem(action.payload._id);
     }
-    // increment: (state) => {
-    //   state.value += 1
-    // },
-    // decrement: (state) => {
-    //   state.value -= 1
-    // },
-    // // Use the PayloadAction type to declare the contents of `action.payload`
-    // incrementByAmount: (state, action: PayloadAction<number>) => {
-    //   state.value += action.payload
-    // },
   },
 })
 
-export const { updateCart } = cartSlice.actions
+export const { initializeCart, updateCart, deleteCart } = cartSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const cartInfo = (state: RootState) => state.cart;

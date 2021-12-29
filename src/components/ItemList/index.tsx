@@ -44,33 +44,23 @@ const Item = ({
 }
 
 const ItemList = () => {
-  const [listData, setListData] = useState([]);
-  useEffect(() => {
-    fetchList()
-  }, []);
-
-  const fetchList = () => {
-    try {
-      fetch('http://localhost:8081/items').
-      then((response) => response.json())
-      .then((...data: any) => {
-        setListData(data[0]);
-      })
-      .catch();
-    } catch (error) {
-      
-    }
-  }
-
+  const itemsList = useAppSelector((state) => state.items.items);
+  const itemsListLoading = useAppSelector((state) => state.items.loading);
   return (
     <div>
       <Row xs={1} sm={2} md={3} lg={5}>
-        {listData.length ? (
-          <>
-            {listData.map((listItem) => <Col><Item {...listItem} /></Col>)}
-          </>
+        {itemsListLoading ? (
+          <>Loading...</>
         ) : (
-          <>No Data Found</>
+          <>
+            {Object.keys(itemsList).length ? (
+              <>
+                {Object.keys(itemsList).map((key) => <Col><Item key={itemsList[key]._id} {...itemsList[key]} /></Col>)}
+              </>
+            ) : (
+              <>No Data Found</>
+            )}
+          </>
         )}
       </Row>
     </div>

@@ -19,19 +19,11 @@ export const userSlice = createSlice({
   name: 'userState',
   initialState,
   reducers: {
-    updateInfo: (state, action: PayloadAction<number>) => {
-      // state = action.payload
+    updateInfo: (state, action: PayloadAction<UserState>) => {
+      state.firstName = action.payload.firstName;
+      state.lastName = action.payload.lastName;
+      state.mobileNumber = action.payload.mobileNumber;
     }
-    // increment: (state) => {
-    //   state.value += 1
-    // },
-    // decrement: (state) => {
-    //   state.value -= 1
-    // },
-    // // Use the PayloadAction type to declare the contents of `action.payload`
-    // incrementByAmount: (state, action: PayloadAction<number>) => {
-    //   state.value += action.payload
-    // },
   },
 })
 

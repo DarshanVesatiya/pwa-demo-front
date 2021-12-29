@@ -14,11 +14,6 @@ import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
 
-import { addUpdateItems } from './utility/index';
-
-var CACHE_STATIC_NAME = 'static-v1';
-var CACHE_DYNAMIC_NAME = 'dynamic-v1';
-
 declare const self: ServiceWorkerGlobalScope;
 
 clientsClaim();
