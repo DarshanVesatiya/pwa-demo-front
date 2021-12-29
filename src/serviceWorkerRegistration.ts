@@ -57,23 +57,23 @@ export function register(config?: Config) {
 
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
+        // used to sync cart
         navigator.serviceWorker.ready.then((registration: any) => {
           console.log(
             'This web app is being served cache-first by a service ' +
               'worker. To learn more, visit https://cra.link/PWA'
           );
-          registration.sync.register('myFirstSync');
+          registration.sync.register('sync-cart');
         });
 
+        // used for push notification
         var reg: any;
         navigator.serviceWorker.ready.then((registration: any) => {
           reg = registration;
           return registration.pushManager.getSubscription()
         })
         .then((subscripton) => {
-          console.log('subscripton ==========> ', subscripton);
           if (subscripton === null) {
-            console.log('1 ===========> ', subscripton);
             var publicKey = 'BK9mXb-qPoH-A4mL9quCuZv7Z7Pd2-o6RsFK_iVRBtTk6uBE13b5Pc5pKLpiGLzEDyyifMsZU4Bxa6jsNJuDBR4';
             var vapidPublicKey = urlBase64ToUint8Array(publicKey);
             // create new subscripton
@@ -83,11 +83,10 @@ export function register(config?: Config) {
             });
           } else {
             // we have a subscripton
-            console.log('2 ===========> ', subscripton);
             return subscripton;
           }
         }).then(function(newSub) {
-          console.log('newSub =========> ', newSub, JSON.stringify(newSub));
+          console.log('push sub =========> ', newSub, JSON.stringify(newSub));
         });
       } else {
         // Is not localhost. Just register service worker

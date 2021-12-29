@@ -1,7 +1,8 @@
 import React from "react";
 
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { deleteCart } from "../../redux/cartSlice";
+import { deleteCart, resetCart } from "../../redux/cartSlice";
+import { getCartItems, deleteCartItem, addSyncUpdateCartItems } from '../../utility';
 
 const Checkout = (): JSX.Element => {
   const cartInfo = useAppSelector((state) => state.cart);
@@ -9,7 +10,34 @@ const Checkout = (): JSX.Element => {
   const itemsListLoading = useAppSelector((state) => state.items.loading);
 
   const dispatch = useAppDispatch();
-console.log('cartInfo ==========> ', cartInfo);
+
+  const completeCheckout = () => {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      addSyncUpdateCartItems('1', { cartId: 1, info: cartInfo });
+    } else {
+      fetch('http://localhost:8081/order', {
+        method: 'POST',
+        // data: cartInfo,
+      }).
+      then((response) => response.json())
+      .then(() => {
+        dispatch(resetCart());
+        getCartItems().then((data) => {
+          if(data.length) {
+            data.forEach((item) => {
+              deleteCartItem(item.itemId);
+            });
+          }
+        });
+      })
+      .catch(() => {
+        // issue with place order show error toast
+      });
+    }
+  }
+  
+
+  // console.log('cartInfo ==========> ', cartInfo);
   return (
     <div className="container">
       <div className="contentbar">
@@ -161,6 +189,7 @@ console.log('cartInfo ==========> ', cartInfo);
                               </button> */}
                               <button
                                 className="btn btn-success my-1"
+                                onClick={completeCheckout}
                               >
                                 Complete Payment
                                 <i className="ri-arrow-right-line ml-2"></i>

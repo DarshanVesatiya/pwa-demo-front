@@ -99,25 +99,14 @@ self.addEventListener('message', (event) => {
 // Any other custom service worker logic can go here.
 self.addEventListener('fetch', event => {
   event.respondWith(async function() {
-    if (event.request.url.split("/").indexOf('items')) {
-
-    }
-    // const cache = await caches.open('todayPrice');
-    // const cachedResponse = await cache.match(event.request);
-    // console.log('cachedResponse =============> ', cachedResponse);
-    // if (cachedResponse) return cachedResponse;
     const networkResponse = await fetch(event.request);
-    // console.log('networkResponse ==============> ', networkResponse);
-    // event.waitUntil(
-    //   cache.put(event.request, networkResponse.clone())
-    // );
     return networkResponse;
   }());
 });
 
 self.addEventListener('sync', (event: any) => {
   console.log('in sync', event.tag);
-  if (event.tag == 'myFirstSync') {
+  if (event.tag == 'sync-cart') {
     event.waitUntil(() => {});
   }
 });
