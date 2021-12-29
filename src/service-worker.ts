@@ -14,6 +14,11 @@ import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
 
+import { addUpdateItems } from './utility/index';
+
+var CACHE_STATIC_NAME = 'static-v1';
+var CACHE_DYNAMIC_NAME = 'dynamic-v1';
+
 declare const self: ServiceWorkerGlobalScope;
 
 clientsClaim();
@@ -53,11 +58,30 @@ registerRoute(
   createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html')
 );
 
+// Api Cache
+registerRoute(
+  // Add in any other file extensions or routing criteria as needed.
+  // ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'),
+  ({ url }) => {
+    return url.pathname.split("/").indexOf('items') !== -1;
+  },
+  // Customize this strategy as needed, e.g., by changing to CacheFirst.
+  new StaleWhileRevalidate({
+    cacheName: 'StaticApiCache',
+    plugins: [
+      // Ensure that once this runtime cache reaches a maximum size the
+      // least-recently used images are removed.
+      new ExpirationPlugin({ maxEntries: 50 }),
+    ],
+  })
+);
+
 // An example runtime caching route for requests that aren't handled by the
 // precache, in this case same-origin .png requests like those from in public/
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
-  ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'),
+  // ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'),
+  ({ url }) => url.pathname.endsWith('.png') || url.pathname.endsWith('.jpg'),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({
     cacheName: 'images',
@@ -78,3 +102,52 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
+self.addEventListener('fetch', event => {
+  event.respondWith(async function() {
+    if (event.request.url.split("/").indexOf('items')) {
+
+    }
+    // const cache = await caches.open('todayPrice');
+    // const cachedResponse = await cache.match(event.request);
+    // console.log('cachedResponse =============> ', cachedResponse);
+    // if (cachedResponse) return cachedResponse;
+    const networkResponse = await fetch(event.request);
+    // console.log('networkResponse ==============> ', networkResponse);
+    // event.waitUntil(
+    //   cache.put(event.request, networkResponse.clone())
+    // );
+    return networkResponse;
+  }());
+});
+
+self.addEventListener('sync', (event: any) => {
+  console.log('in sync', event.tag);
+  if (event.tag == 'myFirstSync') {
+    event.waitUntil(() => {});
+  }
+});
+
+self.addEventListener('notificationclick', (event: any) => {
+  console.log('inside notification click');
+});
+
+self.addEventListener('notificationclose', (event: any) => {
+  console.log('inside notification close');
+});
+
+self.addEventListener('push', (event: any) => {
+  console.log('inside notification close');
+
+  var data = {title: 'New!', content: 'Something New happend!'};
+  if (event.data) {
+    data = JSON.parse(event.data.text());
+  }
+
+  var options = {
+    body: data.content,
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});

@@ -23,8 +23,23 @@ type Config = {
   onUpdate?: (registration: ServiceWorkerRegistration) => void;
 };
 
+function urlBase64ToUint8Array(base64String: string) {
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+
+  var rawData = window.atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+
+  for (var i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
 export function register(config?: Config) {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
@@ -33,7 +48,6 @@ export function register(config?: Config) {
       // serve assets; see https://github.com/facebook/create-react-app/issues/2374
       return;
     }
-
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
 
@@ -43,11 +57,37 @@ export function register(config?: Config) {
 
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
-        navigator.serviceWorker.ready.then(() => {
+        navigator.serviceWorker.ready.then((registration: any) => {
           console.log(
             'This web app is being served cache-first by a service ' +
               'worker. To learn more, visit https://cra.link/PWA'
           );
+          registration.sync.register('myFirstSync');
+        });
+
+        var reg: any;
+        navigator.serviceWorker.ready.then((registration: any) => {
+          reg = registration;
+          return registration.pushManager.getSubscription()
+        })
+        .then((subscripton) => {
+          console.log('subscripton ==========> ', subscripton);
+          if (subscripton === null) {
+            console.log('1 ===========> ', subscripton);
+            var publicKey = 'BK9mXb-qPoH-A4mL9quCuZv7Z7Pd2-o6RsFK_iVRBtTk6uBE13b5Pc5pKLpiGLzEDyyifMsZU4Bxa6jsNJuDBR4';
+            var vapidPublicKey = urlBase64ToUint8Array(publicKey);
+            // create new subscripton
+            return reg.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: vapidPublicKey,
+            });
+          } else {
+            // we have a subscripton
+            console.log('2 ===========> ', subscripton);
+            return subscripton;
+          }
+        }).then(function(newSub) {
+          console.log('newSub =========> ', newSub, JSON.stringify(newSub));
         });
       } else {
         // Is not localhost. Just register service worker
