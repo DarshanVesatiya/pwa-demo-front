@@ -17,7 +17,11 @@ const Checkout = (): JSX.Element => {
     } else {
       fetch('http://localhost:8081/order', {
         method: 'POST',
-        // data: cartInfo,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(cartInfo.items),
       }).
       then((response) => response.json())
       .then(() => {

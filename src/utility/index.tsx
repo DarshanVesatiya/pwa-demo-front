@@ -1,6 +1,6 @@
 import { openDB } from 'idb';
 
-const dbPromise = openDB('DummyAPK', 1, {
+const dbPromise = openDB('DummyAPK', 2, {
   upgrade(db) {
     db.createObjectStore('cart', {
       // The 'id' property of the object will be the key.
@@ -10,8 +10,24 @@ const dbPromise = openDB('DummyAPK', 1, {
       // The 'id' property of the object will be the key.
       keyPath: 'cartId',
     });
+    db.createObjectStore('userSession', {
+      // The 'id' property of the object will be the key.
+      keyPath: 'userIndex',
+    });
   },
 });
+
+export async function getMobileInfo() {
+  return (await dbPromise).get('userSession', '1');
+};
+
+export async function addMobileInfo(val: any) {
+  return (await dbPromise).put('userSession', val);
+};
+
+export async function deleteMobileInfo(key: string) {
+  return (await dbPromise).delete('userSession', key);
+};
 
 export async function getCartItems() {
   return (await dbPromise).getAll('cart');

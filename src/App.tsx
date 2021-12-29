@@ -9,31 +9,58 @@ import logo from "./logo.svg";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css";
 
+import Login from './components/Login';
 import Checkout from './components/Checkout';
 import OrderList from './components/OrderList';
 import ItemList from './components/ItemList';
 
-import { getCartItems } from './utility';
+import { getCartItems, getMobileInfo } from './utility';
 import { useAppSelector, useAppDispatch } from "./redux/hooks";
 import { addList } from "./redux/itemSlice";
 import { initializeCart } from "./redux/cartSlice";
+import { updateInfo } from "./redux/userSlice";
+import { getSuggestedQuery } from "@testing-library/react";
 
 let deferredPrompt: any;
 
 function App() {
   const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(true);
+  const mobileNumber = useAppSelector((state) => state.user.mobileNumber);
   const [installable, setInstallable] = useState(false);
 
   useEffect(() => {
     fetchList();
+    getUser();
   }, []);
+
+  const getUser = () => {
+    try {
+      getMobileInfo().then((userData) => {
+        console.log('userData ======> ', userData);
+        if (userData !== undefined) {
+          dispatch(updateInfo(userData));
+        } else {
+          dispatch(updateInfo({
+            _id: '',
+            firstName: '',
+            lastName: '',
+            mobileNumber: '',
+          }));
+        }
+        setLoading(false);
+      });
+    } catch (error) {
+      
+    }
+  };
 
   const fetchList = () => {
     try {
-      fetch('http://localhost:8081/items').
+      fetch('http://localhost:8080/v1/items').
       then((response) => response.json())
       .then((...data: any) => {
-        dispatch(addList({items: data[0]}));
+        dispatch(addList({items: data[0].Data}));
         let items: any = [];
         let totalAmount = 0;
         getCartItems().then((data) => {
@@ -152,51 +179,50 @@ function App() {
 
   return (
     <BrowserRouter>
-    <div className="">
-      <Navbar bg="light" expand="lg" className="margin-bottom">
-        <Container>
-          <Navbar.Brand>
-            <Link to="/">
-              <img src={logo} className="logo" alt="logo" width="60" />
-            </Link>
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link>
-                <Link to="/checkout">Cart</Link>
-              </Nav.Link>
-              <Nav.Link>
-                <Link to="/order-list">Order List</Link>
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-      
-      <Switch>
-        <Route path="/checkout">
-          <Checkout />
-        </Route>
-        <Route path="/order-list">
-          <OrderList />
-        </Route>
-        <Route path="/">
-          <ItemList />
-        </Route>
-      </Switch>
+      <div className="">
+        {loading ? (
+          <>Loading...</>
+        ) : (
+          <>
+            {mobileNumber !== '' ? <Navbar bg="light" expand="lg" className="margin-bottom">
+              <Container>
+                <Navbar.Brand>
+                  <Link to="/">
+                    <img src={logo} className="logo" alt="logo" width="60" />
+                  </Link>
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                  <Nav className="me-auto">
+                    <Nav.Link>
+                      <Link to="/checkout">Cart</Link>
+                    </Nav.Link>
+                    <Nav.Link>
+                      <Link to="/order-list">Order List</Link>
+                    </Nav.Link>
+                  </Nav>
+                </Navbar.Collapse>
+              </Container>
+            </Navbar> : <></>}
+            
+            <Switch>
+              <Route path="/checkout" render={() => mobileNumber !== '' ? <Checkout /> : <Login />} />
+              <Route path="/order-list" render={() => mobileNumber !== '' ? <OrderList /> : <Login />} />
+              <Route path="/" render={() => mobileNumber !== '' ? <ItemList /> : <Login />} />
+            </Switch>
 
-      {installable &&
-        <button className="install-button" onClick={handleInstallClick}>
-          INSTALL ME
-        </button>
-      }
+            {installable &&
+              <button className="install-button" onClick={handleInstallClick}>
+                INSTALL ME
+              </button>
+            }
 
-      <button className="install-button" onClick={askForNotificationPermission}>
-        ASK NOTIFICATION
-      </button>
-
-    </div>
+            <button className="install-button" onClick={askForNotificationPermission}>
+              ASK NOTIFICATION
+            </button>
+          </>
+        )}
+      </div>
     </BrowserRouter>
   );
 }

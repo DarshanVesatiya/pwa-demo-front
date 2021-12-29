@@ -68,6 +68,7 @@ export function register(config?: Config) {
 
         // used for push notification
         var reg: any;
+        let newSub: boolean = false;
         navigator.serviceWorker.ready.then((registration: any) => {
           reg = registration;
           return registration.pushManager.getSubscription()
@@ -76,6 +77,7 @@ export function register(config?: Config) {
           if (subscripton === null) {
             var publicKey = 'BK9mXb-qPoH-A4mL9quCuZv7Z7Pd2-o6RsFK_iVRBtTk6uBE13b5Pc5pKLpiGLzEDyyifMsZU4Bxa6jsNJuDBR4';
             var vapidPublicKey = urlBase64ToUint8Array(publicKey);
+            newSub = true;
             // create new subscripton
             return reg.pushManager.subscribe({
               userVisibleOnly: true,
@@ -86,6 +88,19 @@ export function register(config?: Config) {
             return subscripton;
           }
         }).then(function(newSub) {
+          if (newSub) {
+            // fetch('http://localhost:8081/order', {
+            //   method: 'POST',
+            //   // data: cartInfo,
+            // }).
+            // then((response) => response.json())
+            // .then(() => {
+            //   // notification added
+            // })
+            // .catch(() => {
+            //   // issue with place order show error toast
+            // });
+          }
           console.log('push sub =========> ', newSub, JSON.stringify(newSub));
         });
       } else {

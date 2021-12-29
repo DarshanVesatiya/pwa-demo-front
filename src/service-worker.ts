@@ -14,6 +14,10 @@ import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
 
+import { resetCart } from "./redux/cartSlice";
+import { useAppDispatch } from "./redux/hooks";
+import { deleteSyncCartItem, getSyncCartItems, getCartItems, deleteCartItem } from './utility';
+
 declare const self: ServiceWorkerGlobalScope;
 
 clientsClaim();
@@ -107,7 +111,43 @@ self.addEventListener('fetch', event => {
 self.addEventListener('sync', (event: any) => {
   console.log('in sync', event.tag);
   if (event.tag == 'sync-cart') {
-    event.waitUntil(() => {});
+    event.waitUntil(
+      getSyncCartItems().then((syncData: any) => {
+        console.log('syncData =========> ', syncData);
+        if (syncData.length === 1) {
+          fetch('http://localhost:8081/order', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify(syncData[0].info),
+          }).
+          then((response) => response.json())
+          .then(() => {
+            // delete sync cart
+            deleteSyncCartItem(syncData[0].cartId);
+
+            // delete cart
+            const dispatch = useAppDispatch();
+            dispatch(resetCart());
+            getCartItems().then((data) => {
+              if(data.length) {
+                data.forEach((item) => {
+                  deleteCartItem(item.itemId);
+                });
+              }
+            });
+          })
+          .catch(() => {
+            // issue with place order show error toast
+            console.log('error 2');
+          });
+        }
+      }).catch(() => {
+        console.log('error 1');
+      })
+    );
   }
 });
 
