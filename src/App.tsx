@@ -3,8 +3,8 @@ import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 
+import { Camera } from './components/Camera';
 import logo from "./logo.svg";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css";
@@ -17,7 +17,7 @@ import ItemList from './components/ItemList';
 import { getCartItems, getMobileInfo } from './utility';
 import { useAppSelector, useAppDispatch } from "./redux/hooks";
 import { addList } from "./redux/itemSlice";
-import { initializeCart, resetCart } from "./redux/cartSlice";
+import { initializeCart, resetCart, getCartCount } from "./redux/cartSlice";
 import { updateInfo } from "./redux/userSlice";
 import { getSuggestedQuery } from "@testing-library/react";
 
@@ -27,10 +27,12 @@ function App() {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const mobileNumber = useAppSelector((state) => state.user.mobileNumber);
+  const rootState = useAppSelector((state) => state);
+
+  const [show, setShow] = useState(false);
   const [installable, setInstallable] = useState(false);
   const channel = new BroadcastChannel('sw-messages');
   channel.addEventListener('message', event => {
-     console.log('Received', event.data);
      dispatch(resetCart());
   });
 
@@ -95,12 +97,6 @@ function App() {
       // Update UI notify the user they can install the PWA
       setInstallable(true);
     });
-
-    window.addEventListener('appinstalled', () => {
-      // Log install to analytics
-      console.log('INSTALL: Success');
-    });
-    initializeMedia();
   }, []);
 
   const askForNotificationPermission = () => {
@@ -148,39 +144,6 @@ function App() {
     });
   };
 
-  const initializeMedia = () => {
-    let navigatorVar: any = navigator;
-    if (!('mediaDevices' in navigator)) {
-      navigatorVar.mediaDevices = {};
-    }
-  
-    if (!('getUserMedia' in navigator.mediaDevices)) {
-      navigator.mediaDevices.getUserMedia = function(constraints) {
-        var getUserMedia = navigatorVar.webkitGetUserMedia || navigatorVar.mozGetUserMedia;
-  
-        if (!getUserMedia) {
-          return Promise.reject(new Error('getUserMedia is not implemented!'));
-        }
-  
-        return new Promise(function(resolve, reject) {
-          getUserMedia.call(navigator, constraints, resolve, reject);
-        });
-      }
-    }
-  
-    var videoPlayer: any = document.querySelector('#player');
-    // var canvasElement = document.querySelector('#canvas');
-
-    navigator.mediaDevices.getUserMedia({video: true})
-      .then(function(stream) {
-        videoPlayer.srcObject = stream;
-        videoPlayer.style.display = 'block';
-      })
-      .catch(function(err) {
-        // imagePickerArea.style.display = 'block';
-      });
-  }
-
   return (
     <BrowserRouter>
       <div className="">
@@ -199,7 +162,7 @@ function App() {
                 <Navbar.Collapse id="basic-navbar-nav">
                   <Nav className="me-auto">
                     <Nav.Link>
-                      <Link to="/checkout">Cart</Link>
+                      <Link to="/checkout">Cart{getCartCount(rootState)}</Link>
                     </Nav.Link>
                     <Nav.Link>
                       <Link to="/order-list">Order List</Link>
@@ -208,7 +171,8 @@ function App() {
                 </Navbar.Collapse>
               </Container>
             </Navbar> : <></>}
-            
+            <Camera show={show} setShow={setShow} />
+            <button onClick={() => setShow(true)}>Scan Qr Code</button>
             <Switch>
               <Route path="/checkout" render={() => mobileNumber !== '' ? <Checkout /> : <Login />} />
               <Route path="/order-list" render={() => mobileNumber !== '' ? <OrderList /> : <Login />} />

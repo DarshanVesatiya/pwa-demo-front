@@ -1,12 +1,14 @@
 import React from 'react'
 
-import { addMobileInfo } from '../../utility';
+import { addMobileInfo, getNotificationInfo, deleteNotificationInfo } from '../../utility';
 import { useAppDispatch } from "../../redux/hooks";
 import { updateInfo } from "../../redux/userSlice";
 
 const Login = () => {
   const dispatch = useAppDispatch();
-
+  // getNotificationInfo().then((data) => {
+  //   console.log('data ========> ', data);
+  // });
   const registerUser = (e: React.FormEvent) => {
     e.preventDefault();
     var formElement = document.getElementById("myform_id") as any;
@@ -22,6 +24,8 @@ const Login = () => {
         firstName: formElement.elements['firstName'].value,
         lastName: formElement.elements['lastName'].value
       };
+
+      // add user data
       fetch('http://localhost:8080/v1/user', {
         method: 'POST',
         headers: {
@@ -43,6 +47,29 @@ const Login = () => {
             ...userData,
             _id: data[0].Data._id,
             userIndex: '1'
+          });
+
+          getNotificationInfo().then((data) => {
+            // add notification data
+            if (data !== undefined) {
+              fetch(`http://localhost:8080/v1/${data[0].Data._id}notification`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+                },
+                body: JSON.stringify(data.info)
+              }).
+              then((response) => response.json())
+              .then((...data: any) => {
+                if (data[0].Status === 'failure') {
+                  // show error
+                } else {
+                  deleteNotificationInfo();
+                }
+              })
+              .catch();
+            }
           });
         }
       })

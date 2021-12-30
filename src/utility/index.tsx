@@ -21,6 +21,18 @@ const dbPromise = openDB('DummyAPK', 2, {
   },
 });
 
+export async function getNotificationInfo() {
+  return (await dbPromise).get('notificationInfo', '1');
+};
+
+export async function addNotificationInfo(val: any) {
+  return (await dbPromise).put('notificationInfo', val);
+};
+
+export async function deleteNotificationInfo() {
+  return (await dbPromise).delete('notificationInfo', '1');
+};
+
 export async function getMobileInfo() {
   return (await dbPromise).get('userSession', '1');
 };

@@ -79,4 +79,16 @@ export const { initializeCart, updateCart, deleteCart, resetCart } = cartSlice.a
 // Other code such as selectors can use the imported `RootState` type
 export const cartInfo = (state: RootState) => state.cart;
 
+export const getCartCount = (state: RootState) => {
+  const itemsArr = state.cart.items;
+  let qty: number = 0;
+  if (itemsArr.length > 0) {
+    itemsArr.map((item: cartItem) => {
+      qty = qty + item.qty;
+    });
+  }
+
+  return qty;
+};
+
 export default cartSlice.reducer
