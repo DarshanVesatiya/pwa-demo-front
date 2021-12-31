@@ -62,7 +62,8 @@ registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   // ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'),
   ({ url }) => {
-    return url.pathname.split("/").indexOf('items') !== -1;
+    return ((url.pathname.split("/").indexOf('items') !== -1) ||
+      (url.pathname.split("/").indexOf('order-list') !== -1));
   },
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({
@@ -170,7 +171,45 @@ self.addEventListener('sync', (event: any) => {
 });
 
 self.addEventListener('notificationclick', (event: any) => {
-  console.log('inside notification click');
+  let notification = event.notification;
+  let action = event.action;
+
+  if (action === 'confirm') {
+    console.info('User enabled notifications feature.', event);
+    notification.close();
+  } else {
+    event.waitUntil(
+      self.clients.matchAll({includeUncontrolled: true})
+        .then((clientArray: any) => {
+          let orderClient;
+
+          for (const client of clientArray) {
+            const url = new URL(client.url);
+            if (url.pathname.indexOf(notification.data.url) !== -1) {
+              client.focus();
+              orderClient = client;
+              break;
+            }
+          }
+
+          if(!orderClient) {
+            self.clients.openWindow(notification.data.url);
+          }
+          
+          // const client = clis.find((c: any) => {
+          //   return c.visibilityState = 'visible';
+          // });
+
+          // if (client) {
+          //   client.navigate(notification.data.url);
+          //   client.focus();
+          // } else {
+            
+          // }
+          notification.close();
+        })
+    )
+  }
 });
 
 self.addEventListener('notificationclose', (event: any) => {
@@ -180,13 +219,18 @@ self.addEventListener('notificationclose', (event: any) => {
 self.addEventListener('push', (event: any) => {
   console.log('inside notification close');
 
-  var data = {title: 'New!', content: 'Something New happend!'};
+  var data = {title: 'Order Status', content: 'Order status is updated!', openUrl: '/'};
   if (event.data) {
     data = JSON.parse(event.data.text());
   }
 
   var options = {
     body: data.content,
+    icon: '/public/logo96x96.png',
+    badge: '/public/logo96x96.png',
+    data: {
+      url: data.openUrl
+    }
   };
 
   event.waitUntil(

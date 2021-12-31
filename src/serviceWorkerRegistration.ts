@@ -25,20 +25,6 @@ type Config = {
   onUpdate?: (registration: ServiceWorkerRegistration) => void;
 };
 
-function urlBase64ToUint8Array(base64String: string) {
-  var padding = '='.repeat((4 - base64String.length % 4) % 4);
-  var base64 = (base64String + padding)
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-
-  var rawData = window.atob(base64);
-  var outputArray = new Uint8Array(rawData.length);
-
-  for (var i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
-}
 
 export function register(config?: Config) {
   if ('serviceWorker' in navigator) {
@@ -69,55 +55,55 @@ export function register(config?: Config) {
         // });
 
         // used for push notification
-        var reg: any;
-        let newSubFlag: boolean = false;
-        navigator.serviceWorker.ready.then((registration: any) => {
-          reg = registration;
-          return registration.pushManager.getSubscription()
-        })
-        .then((subscripton) => {
-          if (subscripton === null) {
-            var publicKey = 'BK9mXb-qPoH-A4mL9quCuZv7Z7Pd2-o6RsFK_iVRBtTk6uBE13b5Pc5pKLpiGLzEDyyifMsZU4Bxa6jsNJuDBR4';
-            var vapidPublicKey = urlBase64ToUint8Array(publicKey);
-            newSubFlag = true;
-            // create new subscripton
-            return reg.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: vapidPublicKey,
-            });
-          } else {
-            // we have a subscripton
-            return subscripton;
-          }
-        }).then(function(newSub) {
-          if (newSubFlag) {
-            getMobileInfo().then((data) => {
-                // add notification data
-                if (data !== undefined) {
-                  fetch(`http://localhost:8080/v1/${data._id}notification`, {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(data.info)
-                  })
-                  .then((response) => response.json())
-                  .then((...data: any) => {
-                    if (data[0].Status === 'failure') {
-                      // show error and add notification data into indexDB
-                      addNotificationInfo({ Index: '1', info: JSON.stringify(newSub) });
-                    } else {
-                      // show success toast
-                    }
-                  })
-                  .catch();
-                } else {
-                  addNotificationInfo({ Index: '1', info: JSON.stringify(newSub) });
-                }
-            })
-          }
-        });
+        // var reg: any;
+        // let newSubFlag: boolean = false;
+        // navigator.serviceWorker.ready.then((registration: any) => {
+        //   reg = registration;
+        //   return registration.pushManager.getSubscription()
+        // })
+        // .then((subscripton) => {
+        //   if (subscripton === null) {
+        //     var publicKey = 'BK9mXb-qPoH-A4mL9quCuZv7Z7Pd2-o6RsFK_iVRBtTk6uBE13b5Pc5pKLpiGLzEDyyifMsZU4Bxa6jsNJuDBR4';
+        //     // var vapidPublicKey = urlBase64ToUint8Array(publicKey);
+        //     newSubFlag = true;
+        //     // create new subscripton
+        //     return reg.pushManager.subscribe({
+        //       userVisibleOnly: true,
+        //       applicationServerKey: vapidPublicKey,
+        //     });
+        //   } else {
+        //     // we have a subscripton
+        //     return subscripton;
+        //   }
+        // }).then(function(newSub) {
+        //   if (newSubFlag) {
+        //     getMobileInfo().then((data) => {
+        //         // add notification data
+        //         if (data !== undefined) {
+        //           fetch(`http://localhost:8080/v1/${data._id}/notification`, {
+        //             method: 'POST',
+        //             headers: {
+        //               'Content-Type': 'application/json',
+        //               'Accept': 'application/json'
+        //             },
+        //             body: JSON.stringify(data.info)
+        //           })
+        //           .then((response) => response.json())
+        //           .then((...data: any) => {
+        //             if (data[0].Status === 'failure') {
+        //               // show error and add notification data into indexDB
+        //               addNotificationInfo({ Index: '1', info: JSON.stringify(newSub) });
+        //             } else {
+        //               // show success toast
+        //             }
+        //           })
+        //           .catch();
+        //         } else {
+        //           addNotificationInfo({ Index: '1', info: JSON.stringify(newSub) });
+        //         }
+        //     })
+        //   }
+        // });
       } else {
         // Is not localhost. Just register service worker
         registerValidSW(swUrl, config);

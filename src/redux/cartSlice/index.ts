@@ -43,7 +43,7 @@ export const cartSlice = createSlice({
             newItem = false;
             currentState.items[i].qty += 1;
           }
-          totalAmount += currentState.items[i].qty * currentState.items[i].price;
+          totalAmount += parseInt(currentState.items[i].qty) * parseInt(currentState.items[i].price);
         }
       }
       
