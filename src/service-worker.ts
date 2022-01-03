@@ -62,7 +62,7 @@ registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   // ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'),
   ({ url }) => {
-    return ((url.pathname.split("/").indexOf('items') !== -1));
+    return (url.pathname.split("/").indexOf('items') !== -1);
   },
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({

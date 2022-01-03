@@ -5,6 +5,7 @@ import { Camera } from '../../components/Camera';
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { deleteCart, resetCart, updateAddress } from "../../redux/cartSlice";
 import { getCartItems, deleteCartItem, addSyncUpdateCartItems } from '../../utility';
+import { Button } from "react-bootstrap";
 
 const Checkout = (): JSX.Element => {
   const [show, setShow] = useState(false);
@@ -82,7 +83,7 @@ const Checkout = (): JSX.Element => {
               ) : (
                 <div className="card-body">
                   <div className="row justify-content-center">
-                    <div className="col-lg-10 col-xl-8">
+                    <div className="col-xl-12">
                       <div className="cart-container">
                         {cartLoading ? (
                           <>Loading...</>
@@ -96,7 +97,7 @@ const Checkout = (): JSX.Element => {
                                       <thead>
                                         <tr>
                                           <th scope="col">#</th>
-                                          <th scope="col">Action</th>
+                                          
                                           <th scope="col">Photo</th>
                                           <th scope="col">Product</th>
                                           <th scope="col">Qty</th>
@@ -104,6 +105,7 @@ const Checkout = (): JSX.Element => {
                                           <th scope="col" className="text-right">
                                             Total
                                           </th>
+                                          <th scope="col"  style={{ "textAlign": "center" }}>Action</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -113,19 +115,12 @@ const Checkout = (): JSX.Element => {
                                               <th scope="row">
                                                 {index + 1}
                                               </th>
-                                              <td style={{ "textAlign": "center" }}>
-                                                <a onClick={() => { dispatch(deleteCart({ _id: cartItem.itemId })) }} className="text-danger">
-                                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
-                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                                  </svg>
-                                                </a>
-                                              </td>
+                                              
                                               <td>
                                                 <img
                                                   src={itemsList[cartItem.itemId]?.image}
-                                                  className="img-fluid"
-                                                  style={{ "borderRadius": "30px", "width": "35px", "height": "35px" }}
+                                                  className="img-fluid border p-1 border-1 rounded"
+                                                  style={{ "width": "100px", "height": "100px" }}
                                                   alt="product"
                                                 />
                                               </td>
@@ -143,6 +138,14 @@ const Checkout = (): JSX.Element => {
                                               <td className="text-right">
                                                 ${cartItem.qty * cartItem.price}
                                               </td>
+                                              <td style={{ "textAlign": "center" }}>
+                                                <a onClick={() => { dispatch(deleteCart({ _id: cartItem.itemId })) }} className="text-danger">
+                                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
+                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                                  </svg>
+                                                </a>
+                                              </td>
                                             </tr>
                                           );
                                       })}
@@ -152,7 +155,7 @@ const Checkout = (): JSX.Element => {
                                 </div>
                                 <div className="cart-body">
                                   <div className="row">
-                                    <div className="col-md-12 order-2 order-lg-1 col-lg-5 col-xl-6">
+                                    <div className="col-md-12 order-2 order-lg-1 col-lg-5 col-xl-8">
                                       <div className="order-note">
                                         <>
                                           <div className="form-group">
@@ -191,7 +194,7 @@ const Checkout = (): JSX.Element => {
                                         </>
                                       </div>
                                     </div>
-                                    <div className="col-md-12 order-1 order-lg-2 col-lg-7 col-xl-6">
+                                    <div className="col-md-12 order-1 order-lg-2 col-lg-7 col-xl-4">
                                       <div className="order-total table-responsive ">
                                         <table className="table table-borderless text-right">
                                           <tbody>
@@ -221,25 +224,29 @@ const Checkout = (): JSX.Element => {
                                     </div>
                                   </div>
                                 </div>
-                                <div className="cart-footer text-right">
+                                <div className="cart-footer float-end">
                                   {/* <button type="button" className="btn btn-info my-1">
                                     <i className="ri-save-line mr-2"></i>Update Cart
                                   </button> */}
                                   {cartAddress !== '' ? (
-                                    <button
-                                      className="btn btn-success my-1"
+                                    <Button
+                                      variant="success"
+                                      size="sm"
+                                      
                                       onClick={completeCheckout}
                                     >
                                       Complete Payment
                                       <i className="ri-arrow-right-line ml-2"></i>
-                                    </button>
+                                    </Button>
                                   ) : (
-                                    <button
-                                      className="btn btn-success my-1 disabled"
+                                    <Button
+                                      variant="success"
+                                      size="sm"
+                                      disabled
                                     >
                                       Complete Payment
                                       <i className="ri-arrow-right-line ml-2"></i>
-                                    </button>
+                                    </Button>
                                   )}
                                   
                                 </div>

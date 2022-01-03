@@ -78,17 +78,15 @@ const Login = () => {
   }
 
   return (
-    <div className="wrapper fadeInDown">
-      <div id="formContent">
-        {/* <div className=fadeIn first">
-          <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon" />
-        </div> */}
+    <div className="wrapper fadeInDown d-flex w-100 h-screen justify-content-center">
+
+      <div id="formContent" className='shadow p-5 mb-5 bg-body rounded-3 loginBox'>
 
         <form onSubmit={registerUser} id="myform_id">
-          <input type="text" className="fadeIn second" name="mobileNumber" placeholder="Mobile Number" />
-          <input type="text" className="fadeIn third" name="firstName" placeholder="First Name" />
-          <input type="text" className="fadeIn third" name="lastName" placeholder="Last Name" />
-          <input type="submit" className="fadeIn fourth" value="Register" />
+          <input type="text" className="fadeIn second mb-2" name="mobileNumber" placeholder="Mobile Number" />
+          <input type="text" className="fadeIn third mb-2" name="firstName" placeholder="First Name" />
+          <input type="text" className="fadeIn third mb-2" name="lastName" placeholder="Last Name" />
+          <input type="submit" className="fadeIn fourth w-100" value="Register" />
         </form>
 
         {/* <div id="formFooter">
