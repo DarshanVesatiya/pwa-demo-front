@@ -28,6 +28,7 @@ let deferredPrompt: any;
 function App() {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
+  const [showInstallVersion, setShowInstallVersion] = useState(false);
   const mobileNumber = useAppSelector((state) => state.user.mobileNumber);
   const userId = useAppSelector((state) => state.user._id);
   const rootState = useAppSelector((state) => state);
@@ -37,7 +38,10 @@ function App() {
   const channel = new BroadcastChannel('sw-messages');
   channel.addEventListener('message', event => {
      dispatch(resetCart());
-     toast.success('Order Placed Successfully');
+    //  if (localStorage.getItem('orderplaced') !== null) {
+    //   localStorage.removeItem('orderplaced');
+    //   toast.success('Order Placed Successfully');
+    //  }
   });
   
 
@@ -50,6 +54,34 @@ function App() {
       dispatch(updateAddress({ address }));
       toast.success('Address added for delivery');
     }
+
+    navigator.serviceWorker.getRegistration().then((registration: any) => {
+      // setRegistrationConst(registration);
+      // if (registration) { // if there is a SW active
+      // console.log('registration =========> ', registration);
+        if (!registration) return;
+        if (registration.waiting) return setShowInstallVersion(true);
+        if (registration.installing) updateStateMessage(registration);
+        registration.addEventListener('updatefound', () => setShowInstallVersion(true));
+
+        function updateStateMessage(reg: any) {
+          reg.installing.addEventListener('statechange', function (event: any) {
+              // console.log('event ========> ', event, registration.installed);
+              if (registration.installed) setShowInstallVersion(true);
+          });
+        }
+      // }
+    });
+
+    var refreshing: boolean = false;
+    navigator.serviceWorker.addEventListener('controllerchange',
+        function () {
+          console.log('controller changes');
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+        }
+    );
   }, []);
 
   const getSubscription = (id: any) => {
@@ -240,6 +272,15 @@ function App() {
     });
   };
 
+  const installServiceWorker = () => {
+    setShowInstallVersion(false);
+    navigator.serviceWorker.getRegistration().then((registration: any) => {
+      if (registration !== null) {
+        registration.waiting.postMessage('SKIP_WAITING');
+      }
+    });
+  }
+
   return (
     <BrowserRouter>
       <div className="">
@@ -282,6 +323,14 @@ function App() {
             <button className="install-button" disabled={isNotyDisable} onClick={askForNotificationPermission}>
               Enable notification
             </button>
+
+            {showInstallVersion ? (
+              <button className="install-button" onClick={installServiceWorker}>
+                New Update Found in App are you want to install
+              </button>
+            ) : (
+              <></>
+            )}
           </>
         )}
       </div>

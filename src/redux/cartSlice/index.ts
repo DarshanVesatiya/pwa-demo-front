@@ -88,7 +88,7 @@ export const cartSlice = createSlice({
       toast.success('Item Removed From Cart');
     },
     updateAddress: (state, action: PayloadAction<{address: string}>) => {
-      console.log(action.payload.address);
+      // console.log(action.payload.address);
       state.address = action.payload.address;
     },
     resetCart: (state) => {

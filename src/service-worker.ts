@@ -95,7 +95,8 @@ registerRoute(
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+  // console.log('event =============$$$$$> ', event);
+  if (event.data && event.data === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
@@ -109,11 +110,12 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('sync', (event: any) => {
-  console.log('in sync', event.tag);
+  // console.log('in sync', event.tag);
   if (event.tag == 'sync-cart') {
     event.waitUntil(
       getSyncCartItems().then((syncData: any) => {
         // console.log('syncData =========> ', syncData);
+
         if (syncData.length === 1) {
           let itemsArr: any = [];
           syncData[0].info.items.map((ele: any) => {
@@ -147,8 +149,6 @@ self.addEventListener('sync', (event: any) => {
             channel.postMessage({
               msg: 'orderplaced'
             });
-            // const dispatch = useAppDispatch();
-            // dispatch(resetCart());
             getCartItems().then((data) => {
               if(data.length) {
                 data.forEach((item) => {
