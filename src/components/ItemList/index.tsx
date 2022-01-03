@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { updateCart } from '../../redux/cartSlice';
+import { Container } from 'react-bootstrap';
 
 interface IItem {
   _id: string;
@@ -35,7 +36,7 @@ const Item = ({
           Some quick example text to build on the card title and make up the bulk of
           the card's content.
         </Card.Text>
-        <Button variant="primary" onClick={() => addToCart(_id, price)}>Add To Cart</Button>
+        <Button variant="outline-primary" size="sm" onClick={() => addToCart(_id, price)}>Add To Cart</Button>
       </Card.Body>
     </Card>
   );
@@ -46,6 +47,7 @@ const ItemList = () => {
   const itemsListLoading = useAppSelector((state) => state.items.loading);
   return (
     <div>
+      <Container>
       <Row xs={1} sm={2} md={3} lg={5}>
         {itemsListLoading ? (
           <>Loading...</>
@@ -61,6 +63,7 @@ const ItemList = () => {
           </>
         )}
       </Row>
+      </Container>
     </div>
   )
 }

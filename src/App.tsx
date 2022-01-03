@@ -6,7 +6,8 @@ import Nav from 'react-bootstrap/Nav';
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 
-import logo from "./logo.svg";
+import logo from "./logo.jpg";
+import cartLogo from './iconmonstr-shopping-cart-thin.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import "./App.css";
@@ -22,6 +23,7 @@ import { addList } from "./redux/itemSlice";
 import { initializeCart, resetCart, getCartCount, updateAddress } from "./redux/cartSlice";
 import { updateInfo } from "./redux/userSlice";
 import { urlBase64ToUint8Array } from "./utility";
+import { Button } from "react-bootstrap";
 
 let deferredPrompt: any;
 
@@ -36,10 +38,10 @@ function App() {
   const [isNotyDisable, setIsNotyDisable] = useState(false);
   const channel = new BroadcastChannel('sw-messages');
   channel.addEventListener('message', event => {
-     dispatch(resetCart());
-     toast.success('Order Placed Successfully');
+    dispatch(resetCart());
+    toast.success('Order Placed Successfully');
   });
-  
+
 
   useEffect(() => {
     fetchList();
@@ -82,7 +84,7 @@ function App() {
         setLoading(false);
       });
     } catch (error) {
-      
+
     }
   };
 
@@ -91,11 +93,11 @@ function App() {
       fetch('http://localhost:8080/v1/items')
         .then((response) => response.json())
         .then((...data: any) => {
-          dispatch(addList({items: data[0].Data}));
+          dispatch(addList({ items: data[0].Data }));
           let items: any = [];
           let totalAmount = 0;
           getCartItems().then((data) => {
-            if(data.length) {
+            if (data.length) {
               data.forEach((item) => {
                 items.push(item);
                 totalAmount += (item.qty * item.price);
@@ -119,7 +121,7 @@ function App() {
         })
         .catch();
     } catch (error) {
-      
+
     }
   }
 
@@ -151,7 +153,7 @@ function App() {
           { action: 'cancel', title: 'Cancel', icon: '/public/logo96x96.png' }
         ]
       };
-  
+
       navigator.serviceWorker.ready
         .then((swreg) => {
           swreg.showNotification('Successfully subscribed (from SW)!', options);
@@ -195,26 +197,26 @@ function App() {
             },
             body: JSON.stringify(newSub)
           })
-          .then((res) => res.json())
-          .then((...data: any) => {
-            if (data[0].Status === 'failure') {
-              // show error and add notification data into indexDB
-              addNotificationInfo({ Index: '1', info: JSON.stringify(newSub) });
-            } else {
-              // show success toast
-              setIsNotyDisable(true);
-              displayConfirmNotification();
-            }
-          })
-          .catch((err) => {
-            console.info(err);
-          })
+            .then((res) => res.json())
+            .then((...data: any) => {
+              if (data[0].Status === 'failure') {
+                // show error and add notification data into indexDB
+                addNotificationInfo({ Index: '1', info: JSON.stringify(newSub) });
+              } else {
+                // show success toast
+                setIsNotyDisable(true);
+                displayConfirmNotification();
+              }
+            })
+            .catch((err) => {
+              console.info(err);
+            })
         }
       });
   };
 
   const askForNotificationPermission = () => {
-    Notification.requestPermission(function(result) {
+    Notification.requestPermission(function (result) {
       console.log('User Choice', result);
       if (result !== 'granted') {
         console.log('No notification permission granted!');
@@ -247,43 +249,75 @@ function App() {
           <>Loading...</>
         ) : (
           <>
-            {mobileNumber !== '' ? <Navbar bg="light" expand="lg" className="margin-bottom">
-              <Container>
-                <Navbar.Brand>
-                  <Link to="/">
-                    <img src={logo} className="logo" alt="logo" width="60" />
-                  </Link>
+
+            {mobileNumber !== '' ? <Navbar bg="light" className=" px-3 h-auto shadow-sm mb-4"> <Container>
+              <Navbar.Brand href="#home">
+                <Link to="/">
+                  <img src={logo} alt="logo" />
+                </Link>
+              </Navbar.Brand>
+              <Navbar.Toggle />
+              <Navbar.Collapse className="justify-content-end">
+                <Nav>
+                  <Nav.Link className="p-0 px-2">
+                    <Link to="/checkout" className="position-relative">
+                      <img src={cartLogo} alt="cart-logo" />
+                      <div className="cartCount">{getCartCount(rootState)}</div>
+                    </Link>
+                  </Nav.Link>
+                  <Nav.Link href={`/${userId}/order-list`} className="p-0 px-2">
+                    Order List
+                  </Nav.Link>
+                  <Button variant="primary" size="sm" className="border-0 mx-2" onClick={handleInstallClick}>
+                    Install me
+                  </Button>
+                  {/* {installable &&
+                      <button className="install-button" onClick={handleInstallClick}>
+                        Install me
+                      </button>
+                    } */}
+                  <Button variant="secondary" size="sm" className="border-0 mx-2" disabled={isNotyDisable} onClick={askForNotificationPermission}>
+                    Enable notification
+                  </Button>
+                </Nav>
+              </Navbar.Collapse>
+
+
+              {/* <Navbar.Brand>
+                  
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
+                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                   <Nav className="me-auto">
                     <Nav.Link>
-                      <Link to="/checkout">Cart{getCartCount(rootState)}</Link>
+                      <Link to="/checkout">
+                        <img src={cartLogo} alt="cart-logo" />
+                        <sup>{getCartCount(rootState)}</sup>
+                      </Link>
                     </Nav.Link>
                     <Nav.Link>
                       <Link to={`/${userId}/order-list`}>Order List</Link>
                     </Nav.Link>
+                    {installable &&
+                      <button className="install-button" onClick={handleInstallClick}>
+                        Install me
+                      </button>
+                    }
+                    <button className="install-button" disabled={isNotyDisable} onClick={askForNotificationPermission}>
+                      Enable notification
+                    </button>
                   </Nav>
-                </Navbar.Collapse>
-              </Container>
-            </Navbar> : <></>}
+                </Navbar.Collapse> */}
+
+            </Container></Navbar> : <></>}
             <Switch>
               <Route path="/checkout" render={() => mobileNumber !== '' ? <Checkout /> : <Login />} />
               <Route path={'/:userId/order-list'} render={() => mobileNumber !== '' ? <OrderList /> : <Login />} />
               <Route path="/" render={() => mobileNumber !== '' ? <ItemList /> : <Login />} />
             </Switch>
-
-            {installable &&
-              <button className="install-button" onClick={handleInstallClick}>
-                Install me
-              </button>
-            }
-
-            <button className="install-button" disabled={isNotyDisable} onClick={askForNotificationPermission}>
-              Enable notification
-            </button>
           </>
         )}
+
       </div>
       <ToastContainer
         position="top-right"
