@@ -3,10 +3,12 @@ import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
+import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
-import { Camera } from './components/Camera';
 import logo from "./logo.svg";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 import "./App.css";
 
 import Login from './components/Login';
@@ -17,7 +19,7 @@ import ItemList from './components/ItemList';
 import { getCartItems, getMobileInfo, addNotificationInfo } from './utility';
 import { useAppSelector, useAppDispatch } from "./redux/hooks";
 import { addList } from "./redux/itemSlice";
-import { initializeCart, resetCart, getCartCount } from "./redux/cartSlice";
+import { initializeCart, resetCart, getCartCount, updateAddress } from "./redux/cartSlice";
 import { updateInfo } from "./redux/userSlice";
 import { urlBase64ToUint8Array } from "./utility";
 
@@ -30,18 +32,24 @@ function App() {
   const userId = useAppSelector((state) => state.user._id);
   const rootState = useAppSelector((state) => state);
 
-  const [show, setShow] = useState(false);
   const [installable, setInstallable] = useState(false);
   const [isNotyDisable, setIsNotyDisable] = useState(false);
   const channel = new BroadcastChannel('sw-messages');
   channel.addEventListener('message', event => {
      dispatch(resetCart());
+     toast.success('Order Placed Successfully');
   });
   
 
   useEffect(() => {
     fetchList();
     getUser();
+    const search = window.location.search;
+    const address = (new URLSearchParams(search)).get("address");
+    if (address !== null) {
+      dispatch(updateAddress({ address }));
+      toast.success('Address added for delivery');
+    }
   }, []);
 
   const getSubscription = (id: any) => {
@@ -96,7 +104,17 @@ function App() {
                 items,
                 totalAmount
               }))
+            } else {
+              dispatch(initializeCart({
+                items: [],
+                totalAmount: 0
+              }))
             }
+          }).catch(() => {
+            dispatch(initializeCart({
+              items: [],
+              totalAmount: 0
+            }))
           });
         })
         .catch();
@@ -249,8 +267,6 @@ function App() {
                 </Navbar.Collapse>
               </Container>
             </Navbar> : <></>}
-            <Camera show={show} setShow={setShow} />
-            <button onClick={() => setShow(true)}>Scan Qr Code</button>
             <Switch>
               <Route path="/checkout" render={() => mobileNumber !== '' ? <Checkout /> : <Login />} />
               <Route path={'/:userId/order-list'} render={() => mobileNumber !== '' ? <OrderList /> : <Login />} />
@@ -269,6 +285,17 @@ function App() {
           </>
         )}
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </BrowserRouter>
   );
 }

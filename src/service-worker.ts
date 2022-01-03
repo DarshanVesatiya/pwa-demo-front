@@ -62,8 +62,7 @@ registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   // ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'),
   ({ url }) => {
-    return ((url.pathname.split("/").indexOf('items') !== -1) ||
-      (url.pathname.split("/").indexOf('order-list') !== -1));
+    return ((url.pathname.split("/").indexOf('items') !== -1));
   },
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({
@@ -114,7 +113,7 @@ self.addEventListener('sync', (event: any) => {
   if (event.tag == 'sync-cart') {
     event.waitUntil(
       getSyncCartItems().then((syncData: any) => {
-        console.log('syncData =========> ', syncData);
+        // console.log('syncData =========> ', syncData);
         if (syncData.length === 1) {
           let itemsArr: any = [];
           syncData[0].info.items.map((ele: any) => {

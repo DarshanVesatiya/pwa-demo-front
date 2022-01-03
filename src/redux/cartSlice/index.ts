@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 
 import { addUpdateCartItems, deleteCartItem } from '../../utility';
 import type { RootState } from '../store'
@@ -14,13 +15,15 @@ interface cartState {
   items: cartItem[],
   address: string,
   totalAmount: number,
+  loading: boolean,
 }
 
 // Define the initial state using that type
 const initialState: cartState = {
   items: [],
-  address: 'Test Set 42 at Test Stadium',
-  totalAmount: 0
+  address: '',
+  totalAmount: 0,
+  loading: true
 }
 
 export const cartSlice = createSlice({
@@ -30,6 +33,7 @@ export const cartSlice = createSlice({
     initializeCart: (state, action: PayloadAction<{items: cartItem[], totalAmount: number}>) => {
       state.totalAmount = action.payload.totalAmount;
       state.items = action.payload.items;
+      state.loading = false;
     },
     updateCart: (state, action: PayloadAction<{_id: string, price: number}>) => {
       let currentState = JSON.parse(JSON.stringify(current(state)));
@@ -62,10 +66,30 @@ export const cartSlice = createSlice({
         deleteCartItem(item.itemId);
         addUpdateCartItems(item.itemId, item);
       });
-
+      toast.success('Item Added in Cart');
     },
     deleteCart: (state, action: PayloadAction<{_id: string}>) => {
-      deleteCartItem(action.payload._id);
+      let currentState = JSON.parse(JSON.stringify(current(state)));
+      const { _id } = action.payload;
+      let totalAmount = 0;
+
+      if (currentState.items.length > 0) {
+        for(let i = 0; currentState.items.length > i; i++){
+          if (currentState.items[i].itemId !== _id) {
+            totalAmount += parseInt(currentState.items[i].qty) * parseInt(currentState.items[i].price);
+          } else {
+            currentState.items.splice(i, 1);
+          }
+        }
+      }
+      state.totalAmount = totalAmount;
+      state.items = currentState.items;
+      deleteCartItem(_id);
+      toast.success('Item Removed From Cart');
+    },
+    updateAddress: (state, action: PayloadAction<{address: string}>) => {
+      console.log(action.payload.address);
+      state.address = action.payload.address;
     },
     resetCart: (state) => {
       state.items = [];
@@ -74,7 +98,7 @@ export const cartSlice = createSlice({
   },
 })
 
-export const { initializeCart, updateCart, deleteCart, resetCart } = cartSlice.actions
+export const { initializeCart, updateCart, deleteCart, resetCart, updateAddress } = cartSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const cartInfo = (state: RootState) => state.cart;
