@@ -116,7 +116,14 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
 
   return (
     <Modal show={show} id="scanner-modal">
-      <Modal.Header closeButton onClick={() => setShow(false)}>
+      <Modal.Header closeButton onClick={() => {
+        var videoPlayer: any = document.querySelector('#player');
+        const stream = videoPlayer.srcObject;
+        (stream.getTracks()).forEach(function(track: any) {
+          track.stop();
+        })
+        setShow(false);
+      }}>
         <Modal.Title>Scan QR Code</Modal.Title>
       </Modal.Header>
 

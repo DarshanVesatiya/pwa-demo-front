@@ -170,7 +170,7 @@ const Checkout = (): JSX.Element => {
                                                 onChange={(event) => dispatch(updateAddress({address: event.target.value})) }
                                               />
                                               <div className="input-group-append">
-                                                <Camera show={show} setShow={setShow} />
+                                                {show ? <Camera show={show} setShow={setShow} /> : <></>}
                                                 <button
                                                   className="input-group-text"
                                                   type="button"
