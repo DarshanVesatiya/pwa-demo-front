@@ -39,13 +39,7 @@ const OrderList = (): JSX.Element => {
       fetch(`http://localhost:8080/v1/user/${userId}/order-list`)
         .then((response) => response.json())
         .then((...data: any) => {
-          let finalData: any = [];
-          data[0].Data.map((op: any) => {
-            for(let i=0; i<20; i++) {
-              finalData.push(op);
-            }
-          });
-          setOrderList(finalData);
+          setOrderList(data[0].Data);
         })
         .catch();
     } catch (error) {

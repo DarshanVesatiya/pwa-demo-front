@@ -24,6 +24,14 @@ const Checkout = (): JSX.Element => {
         navigator.serviceWorker.ready.then((registration: any) => {
           registration.sync.register('sync-cart');
           toast.info('Order Send for Sync');
+          dispatch(resetCart());
+          getCartItems().then((data) => {
+            if(data.length) {
+              data.forEach((item) => {
+                deleteCartItem(item.itemId);
+              });
+            }
+          });
         })
       });
     } else {

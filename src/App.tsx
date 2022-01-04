@@ -54,7 +54,7 @@ function App() {
     const address = (new URLSearchParams(search)).get("address");
     if (address !== null) {
       dispatch(updateAddress({ address: address.replace(/_/g, ' ') }));
-      toast.success('Address added for delivery');
+      // toast.success('Address added for delivery');
     }
 
     navigator.serviceWorker.getRegistration().then((registration: any) => {
@@ -316,9 +316,9 @@ function App() {
                   Order List
                 </Nav.Link>
                 <div className="buttonBox">
-                  <Button variant="primary" size="sm" className="border-0 mx-2" onClick={handleInstallClick}>
+                      { installable && <Button variant="primary" size="sm" className="border-0 mx-2" onClick={handleInstallClick}>
                         Install me
-                      </Button> 
+                      </Button> }
                     {/* {installable &&
                       <button className="install-button" onClick={handleInstallClick}>
                         Install me
@@ -341,13 +341,13 @@ function App() {
           </>
         )}
 
-        {showInstallVersion ? (
+        {/* {showInstallVersion ? (
           <button className="install-button" onClick={installServiceWorker}>
             New Update Found in App are you want to install
           </button>
         ) : (
           <></>
-        )}
+        )} */}
       </div>
       <ToastContainer
         position="top-right"

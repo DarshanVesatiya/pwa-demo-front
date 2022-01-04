@@ -100,8 +100,10 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
     if (qrcodeData !== undefined && qrcodeData !== null) {
       // console.log('qrcodeData =========> ', qrcodeData);
       const qrcodedataSplit = qrcodeData.data.split("?")
+      // console.log('qrcodedataSplit ==========> ', qrcodedataSplit);
       if (Array.isArray(qrcodedataSplit) && qrcodedataSplit.length === 2) {
         const address = (new URLSearchParams(`?${qrcodedataSplit[1]}`)).get("address");
+        // console.log('address ==========> ', address);
         if (address !== null) {
           dispatch(updateAddress({ address: address.replace(/_/g, ' ') }));
           setShow(false);
