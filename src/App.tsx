@@ -53,7 +53,7 @@ function App() {
     const search = window.location.search;
     const address = (new URLSearchParams(search)).get("address");
     if (address !== null) {
-      dispatch(updateAddress({ address }));
+      dispatch(updateAddress({ address: address.replace(/_/g, ' ') }));
       toast.success('Address added for delivery');
     }
 

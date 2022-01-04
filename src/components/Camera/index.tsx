@@ -103,7 +103,7 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
       if (Array.isArray(qrcodedataSplit) && qrcodedataSplit.length === 2) {
         const address = (new URLSearchParams(`?${qrcodedataSplit[1]}`)).get("address");
         if (address !== null) {
-          dispatch(updateAddress({ address: address }));
+          dispatch(updateAddress({ address: address.replace(/_/g, ' ') }));
           setShow(false);
           toast.success('Address Fetch Successfully');
         }
