@@ -1,4 +1,5 @@
 import React from 'react'
+import { toast } from 'react-toastify';
 
 import { addMobileInfo, getNotificationInfo, deleteNotificationInfo } from '../../utility';
 import { useAppDispatch } from "../../redux/hooks";
@@ -18,6 +19,7 @@ const Login = () => {
       formElement.elements['lastName'].value === ''
     ) {
       // show error
+      toast.error('Invalid Data');
     } else {
       let userData = {
         mobileNumber: formElement.elements['mobileNumber'].value,
@@ -38,6 +40,7 @@ const Login = () => {
       .then((...data: any) => {
         if (data[0].Status === 'failure') {
           // show error
+          toast.error('Issue in creating user please try after some time!');
         } else {
           dispatch(updateInfo({
             ...userData,
@@ -52,7 +55,7 @@ const Login = () => {
           getNotificationInfo().then((data) => {
             // add notification data
             if (data !== undefined) {
-              fetch(`http://localhost:8080/v1/${data[0].Data._id}notification`, {
+              fetch(`http://localhost:8080/v1/${data[0].Data._id}/notification`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -64,6 +67,7 @@ const Login = () => {
               .then((...data: any) => {
                 if (data[0].Status === 'failure') {
                   // show error
+                  toast.error('Error adding notification settings!');
                 } else {
                   deleteNotificationInfo();
                 }
