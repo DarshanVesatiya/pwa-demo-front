@@ -79,21 +79,21 @@ const Checkout = (): JSX.Element => {
                 <h5 className="card-title">Cart</h5>
               </div>
               {itemsListLoading ? (
-                <>Loading...</>
+                <div className="loaderBox"><div className="loader"></div></div>
               ) : (
                 <div className="card-body">
                   <div className="row justify-content-center">
                     <div className="col-xl-12">
                       <div className="cart-container">
                         {cartLoading ? (
-                          <>Loading...</>
+                          <div className="loaderBox"><div className="loader"></div></div>
                         ) : (
                           <>
                             {cartInfo.items.length > 0 ? (
                               <>
                                 <div className="cart-head">
                                   <div className="table-responsive">
-                                    <table className="table table-borderless">
+                                    <table className="table table-borderless responsiveTable">
                                       <thead>
                                         <tr>
                                           <th scope="col">#</th>
@@ -155,7 +155,7 @@ const Checkout = (): JSX.Element => {
                                 </div>
                                 <div className="cart-body">
                                   <div className="row">
-                                    <div className="col-md-12 order-2 order-lg-1 col-lg-5 col-xl-8">
+                                    <div className="col-md-12 order-2 order-lg-1 col-lg-8 col-xl-8">
                                       <div className="order-note">
                                         <>
                                           <div className="form-group">
@@ -194,7 +194,7 @@ const Checkout = (): JSX.Element => {
                                         </>
                                       </div>
                                     </div>
-                                    <div className="col-md-12 order-1 order-lg-2 col-lg-7 col-xl-4">
+                                    <div className="col-md-12 order-1 order-lg-2 col-lg-4 col-xl-4">
                                       <div className="order-total table-responsive ">
                                         <table className="table table-borderless text-right">
                                           <tbody>
@@ -253,7 +253,7 @@ const Checkout = (): JSX.Element => {
                               </>
                             ) : (
                               <>
-                                No Items in Cart
+                                <div className="p-5 d-flex justify-content-center items-center">No Items in Cart</div>
                               </>
                             )}
                           </>

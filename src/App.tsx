@@ -6,7 +6,7 @@ import Nav from 'react-bootstrap/Nav';
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 
-import logo from "./logo.jpg";
+import logo from "./logo.png";
 import cartLogo from './iconmonstr-shopping-cart-thin.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -39,7 +39,7 @@ function App() {
   const [isNotyDisable, setIsNotyDisable] = useState(false);
   const channel = new BroadcastChannel('sw-messages');
   channel.addEventListener('message', event => {
-     dispatch(resetCart());
+    dispatch(resetCart());
     //  if (localStorage.getItem('orderplaced') !== null) {
     //   localStorage.removeItem('orderplaced');
     //   toast.success('Order Placed Successfully');
@@ -61,28 +61,28 @@ function App() {
       // setRegistrationConst(registration);
       // if (registration) { // if there is a SW active
       // console.log('registration =========> ', registration);
-        if (!registration) return;
-        if (registration.waiting) return setShowInstallVersion(true);
-        if (registration.installing) updateStateMessage(registration);
-        registration.addEventListener('updatefound', () => setShowInstallVersion(true));
+      if (!registration) return;
+      if (registration.waiting) return setShowInstallVersion(true);
+      if (registration.installing) updateStateMessage(registration);
+      registration.addEventListener('updatefound', () => setShowInstallVersion(true));
 
-        function updateStateMessage(reg: any) {
-          reg.installing.addEventListener('statechange', function (event: any) {
-              // console.log('event ========> ', event, registration.installed);
-              if (registration.installed) setShowInstallVersion(true);
-          });
-        }
+      function updateStateMessage(reg: any) {
+        reg.installing.addEventListener('statechange', function (event: any) {
+          // console.log('event ========> ', event, registration.installed);
+          if (registration.installed) setShowInstallVersion(true);
+        });
+      }
       // }
     });
 
     var refreshing: boolean = false;
     navigator.serviceWorker.addEventListener('controllerchange',
-        function () {
-          console.log('controller changes');
-            if (refreshing) return;
-            refreshing = true;
-            window.location.reload();
-        }
+      function () {
+        console.log('controller changes');
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      }
     );
   }, []);
 
@@ -286,71 +286,53 @@ function App() {
   return (
     <BrowserRouter>
       <div className="">
+
+        
+
+
         {loading ? (
-          <>Loading...</>
+          <div className="loaderBox"><div className="loader"></div></div>
         ) : (
           <>
 
-            {mobileNumber !== '' ? <Navbar bg="light" className=" px-3 h-auto shadow-sm mb-4"> <Container>
-              <Navbar.Brand href="#home">
-                <Link to="/">
-                  <img src={logo} alt="logo" />
-                </Link>
-              </Navbar.Brand>
-              <Navbar.Toggle />
-              <Navbar.Collapse className="justify-content-end">
-                <Nav>
-                  <Nav.Link className="p-0 px-2">
-                    <Link to="/checkout" className="position-relative">
-                      <img src={cartLogo} alt="cart-logo" />
-                      <div className="cartCount">{getCartCount(rootState)}</div>
-                    </Link>
-                  </Nav.Link>
-                  <Nav.Link href={`/${userId}/order-list`} className="p-0 px-2">
-                    Order List
-                  </Nav.Link>
+
+ {mobileNumber !== '' ? <Navbar collapseOnSelect expand="md" bg="light" variant="light" className="bg-white mb-4 shadow-sm">
+          <Container>
+            <Navbar.Brand href="#home">
+              <Link to="/">
+                <img src={logo} alt="logo" />
+              </Link>
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse className="justify-content-end" id="responsive-navbar-nav">
+              <Nav>
+                <Nav.Link className="p-0 px-2">
+                  <Link to="/checkout" className="position-relative">
+                    <img src={cartLogo} alt="cart-logo" />
+                    <div className="cartCount">{getCartCount(rootState)}</div>
+                  </Link>
+                </Nav.Link>
+                <Nav.Link href={`/${userId}/order-list`} className="p-0 px-2">
+                  Order List
+                </Nav.Link>
+                <div className="buttonBox">
                   <Button variant="primary" size="sm" className="border-0 mx-2" onClick={handleInstallClick}>
-                    Install me
-                  </Button>
-                  {/* {installable &&
+                        Install me
+                      </Button> 
+                    {/* {installable &&
                       <button className="install-button" onClick={handleInstallClick}>
                         Install me
                       </button>
                     } */}
-                  <Button variant="secondary" size="sm" className="border-0 mx-2" disabled={isNotyDisable} onClick={askForNotificationPermission}>
-                    Enable notification
-                  </Button>
-                </Nav>
-              </Navbar.Collapse>
-
-
-              {/* <Navbar.Brand>
-                  
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                  <Nav className="me-auto">
-                    <Nav.Link>
-                      <Link to="/checkout">
-                        <img src={cartLogo} alt="cart-logo" />
-                        <sup>{getCartCount(rootState)}</sup>
-                      </Link>
-                    </Nav.Link>
-                    <Nav.Link>
-                      <Link to={`/${userId}/order-list`}>Order List</Link>
-                    </Nav.Link>
-                    {installable &&
-                      <button className="install-button" onClick={handleInstallClick}>
-                        Install me
-                      </button>
-                    }
-                    <button className="install-button" disabled={isNotyDisable} onClick={askForNotificationPermission}>
+                    <Button variant="secondary" size="sm" className="border-0 mx-2" disabled={isNotyDisable} onClick={askForNotificationPermission}>
                       Enable notification
-                    </button>
-                  </Nav>
-                </Navbar.Collapse> */}
-
-            </Container></Navbar> : <></>}
+                    </Button>
+                </div>
+              </Nav>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar> : <></>}
+           
             <Switch>
               <Route path="/checkout" render={() => mobileNumber !== '' ? <Checkout /> : <Login />} />
               <Route path={'/:userId/order-list'} render={() => mobileNumber !== '' ? <OrderList /> : <Login />} />

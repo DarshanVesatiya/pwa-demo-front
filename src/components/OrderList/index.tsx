@@ -1,3 +1,4 @@
+import { listeners } from "process";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -38,7 +39,13 @@ const OrderList = (): JSX.Element => {
       fetch(`http://localhost:8080/v1/user/${userId}/order-list`)
         .then((response) => response.json())
         .then((...data: any) => {
-          setOrderList(data[0].Data);
+          let finalData: any = [];
+          data[0].Data.map((op: any) => {
+            for(let i=0; i<20; i++) {
+              finalData.push(op);
+            }
+          });
+          setOrderList(finalData);
         })
         .catch();
     } catch (error) {
@@ -48,7 +55,9 @@ const OrderList = (): JSX.Element => {
 
   return (
     <div className="container">
-      <table className="table table-hover">
+      <div className="card">
+        <div className="table-responsive orderListItems ">
+      <table className="table table-hover responsiveTable">
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -79,11 +88,13 @@ const OrderList = (): JSX.Element => {
                 </>
               )
               : (
-                <>No Data Found</>
+                <><tr><td className="p-5 text-center" colSpan={6}>No Data Found</td></tr></>
               )
           }
         </tbody>
       </table>
+      </div>
+      </div>
     </div>
   );
 }

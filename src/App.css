@@ -4,11 +4,37 @@
   object-fit: cover;
 }
 
+html { overflow-y: unset; }
+html, body { height: 100%; }
+
+.font-bold { font-weight:bold; }
 body{
   background: #f4f5f7;
 }
 
+.card-text{ font-size:14px; }
+
 .h-screen{ height: 100vh; }  
+
+.loaderBox { height:  calc(100vh - 190px) !important;width:100%; display: flex; align-items: center; justify-content: center; }
+.loader {
+  margin: auto;
+  border: 5px solid #EAF0F6;
+  border-radius: 50%;
+  border-top: 5px solid #2c0638;
+  width: 80px;
+  height: 80px;
+  animation: spinner 1s linear infinite;
+  }
+  
+  
+  
+  @keyframes spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+  }
+  
+  
 
 .cart-container .cart-body {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
@@ -27,6 +53,8 @@ body{
   text-align: center;
 }
 
+.table tr { font-size: 13px; } 
+ 
 .wrapper {
   display: flex;
   align-items: center;
@@ -268,4 +296,40 @@ input[type=text]:placeholder {
 
 #scanner-modal .modal-content {
   overflow: hidden;
+}
+
+
+.modal-body video { width:100% }
+
+@media only screen and (max-width:767px) {
+  .navbar-nav {
+    text-align: right;
+    padding-top: 15px;
+    padding-right: 5px;
+  }
+  .navbar-nav a, .navbar-nav button {
+    margin-bottom: 20px;
+  }
+
+  .navbar-nav { display: block; }
+  .buttonBox{
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: flex-end;
+  }
+}
+
+@media only screen and (max-width:666px) {
+
+.responsiveTable{
+  width: 500px;
+}
+
+.orderListItems .responsiveTable{
+  width: 700px;
+}
+
+
+
 }

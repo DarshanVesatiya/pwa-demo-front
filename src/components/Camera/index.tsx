@@ -130,7 +130,7 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
       <Modal.Body>
         {Object.keys(cameraArr).length > 0 ? (
           <>
-            <select onChange={(event) => setCameraId(event.target.value)}>
+            <select className="w-100 mb-4"  onChange={(event) => setCameraId(event.target.value)}>
               {Object.keys(cameraArr).map((key) => <option value={key}>{cameraArr[key]}</option>)}
             </select>
           </>

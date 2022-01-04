@@ -30,9 +30,9 @@ const Item = ({
     <Card className="mb-4">
       <Card.Img className="cardImage" variant="top" src={image} />
       <Card.Body>
-        <Card.Title>{name}</Card.Title>
-        <Card.Subtitle>${price}</Card.Subtitle>
-        <Card.Text>
+        <h6 className='mb-4'>{name}</h6>
+        <Card.Subtitle className='mb-2 font-bold '>${price}</Card.Subtitle>
+        <Card.Text className="mb-4">
           Some quick example text to build on the card title and make up the bulk of
           the card's content.
         </Card.Text>
@@ -50,7 +50,7 @@ const ItemList = () => {
       <Container>
       <Row xs={1} sm={2} md={3} lg={5}>
         {itemsListLoading ? (
-          <>Loading...</>
+          <div className="loaderBox"><div className="loader"></div></div>
         ) : (
           <>
             {Object.keys(itemsList).length ? (

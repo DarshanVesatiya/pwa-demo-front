@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 import { addMobileInfo, getNotificationInfo, deleteNotificationInfo } from '../../utility';
 import { useAppDispatch } from "../../redux/hooks";
 import { updateInfo } from "../../redux/userSlice";
+import logo from "../../logo.png";
+
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -84,6 +86,7 @@ const Login = () => {
   return (
     <div className="wrapper fadeInDown d-flex w-100 h-screen justify-content-center">
 
+      <img className="mb-4" src={logo} alt="logo" />
       <div id="formContent" className='shadow p-5 mb-5 bg-body rounded-3 loginBox'>
 
         <form onSubmit={registerUser} id="myform_id">
