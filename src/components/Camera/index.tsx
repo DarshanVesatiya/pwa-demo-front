@@ -39,9 +39,10 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
     var videoPlayer: any = document.querySelector('#player');
     const stream = videoPlayer?.srcObject;
     if (stream !== undefined && stream !== null) {
-      (stream.getTracks()).forEach(function(track: any) {
-        track.stop();
-      })
+      let streamArr = stream.getTracks();
+      for(let i = 0; i < streamArr.length; i++) {
+        streamArr[i].stop();
+      }
     }
 
     navigator.mediaDevices.getUserMedia({video: { deviceId: { exact: cameraId } }})
