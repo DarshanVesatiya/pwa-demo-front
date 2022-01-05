@@ -37,10 +37,18 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
 
   const setCamera = () => {
     var videoPlayer: any = document.querySelector('#player');
+    const stream = videoPlayer?.srcObject;
+    if (stream !== undefined && stream !== null) {
+      (stream.getTracks()).forEach(function(track: any) {
+        track.stop();
+      })
+    }
+
     navigator.mediaDevices.getUserMedia({video: { deviceId: { exact: cameraId } }})
     .then(function(stream) {
       videoPlayer.srcObject = stream;
-      videoPlayer.style.display = 'block';
+      // videoPlayer.style.display = 'block';
+      videoPlayer.play();
       setInitializeDone(true);
     })
     .catch(function(err) {
@@ -72,7 +80,6 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
     var cameraDeviceIds: any = [];
     var cameraObj: any = {};
     navigator.mediaDevices.enumerateDevices().then(function (devices) {
-      // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices
       devices.forEach(function (device, index) {
         if (device.kind === 'videoinput') {
           cameraDeviceIds.push(device.deviceId)
@@ -95,15 +102,11 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
     const imageData = context.getImageData(0, 0, canvasElement.width, canvasElement.height);
  
     const qrcode = new Decoder();
-    // console.log('data url =======> ', canvasElement.toDataURL("image/jpeg"));
     const qrcodeData = qrcode.decode(imageData.data, imageData.width, imageData.height);
     if (qrcodeData !== undefined && qrcodeData !== null) {
-      // console.log('qrcodeData =========> ', qrcodeData);
       const qrcodedataSplit = qrcodeData.data.split("?")
-      // console.log('qrcodedataSplit ==========> ', qrcodedataSplit);
       if (Array.isArray(qrcodedataSplit) && qrcodedataSplit.length === 2) {
         const address = (new URLSearchParams(`?${qrcodedataSplit[1]}`)).get("address");
-        // console.log('address ==========> ', address);
         if (address !== null) {
           dispatch(updateAddress({ address: address.replace(/_/g, ' ') }));
           setShow(false);
@@ -143,12 +146,7 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
         )}
         <video autoPlay id="player" />
         <canvas id="canvas" width="600" height="500" style={{ "visibility": "hidden", "position": "absolute", "top": "0px", "right": "0px" }} />
-        {/* <button onClick={captureImage}>Capture</button> */}
       </Modal.Body>
-
-      {/* <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShow(false)}>Close</Button>
-      </Modal.Footer> */}
     </Modal>
   )
 }

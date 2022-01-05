@@ -182,7 +182,35 @@ const Checkout = (): JSX.Element => {
                                                 <button
                                                   className="input-group-text"
                                                   type="button"
-                                                  onClick={() => setShow(true)}
+                                                  onClick={() => {
+                                                    let navigatorVar: any = navigator;
+                                                    if (!('mediaDevices' in navigator)) {
+                                                      navigatorVar.mediaDevices = {};
+                                                    }
+                                                  
+                                                    if (!('getUserMedia' in navigator.mediaDevices)) {
+                                                      navigator.mediaDevices.getUserMedia = function(constraints) {
+                                                        var getUserMedia = navigatorVar.webkitGetUserMedia || navigatorVar.mozGetUserMedia;
+                                                  
+                                                        if (!getUserMedia) {
+                                                          return Promise.reject(new Error('getUserMedia is not implemented!'));
+                                                        }
+                                                  
+                                                        return new Promise(function(resolve, reject) {
+                                                          getUserMedia.call(navigator, constraints, resolve, reject);
+                                                        });
+                                                      }
+                                                    }
+
+                                                    navigator.mediaDevices.getUserMedia({ video: true})
+                                                    .then(() => {
+                                                      console.log('have permission');
+                                                      setShow(true)
+                                                    })
+                                                    .catch(() => {
+                                                      toast.info('Either you have not provided camera permission or there is any other issue so you have to manually enter address.');
+                                                    });
+                                                  }}
                                                   id="button-addonTags"
                                                 >
                                                   Scan QR Code
