@@ -34,28 +34,43 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
       setCamera();
     }
   }, [cameraId]);
-
+// console.log('cameraId =========> ', cameraId);
   const setCamera = () => {
     var videoPlayer: any = document.querySelector('#player');
+    var cameraLoader: any = document.querySelector('#cameraLoader');
+    var errorInAccess: any = document.querySelector('#errorInAccess');
     const stream = videoPlayer?.srcObject;
+    videoPlayer.style.display = 'none';
+    cameraLoader.style.display = 'block';
+    errorInAccess.style.display = 'none';
+    videoPlayer.addEventListener('stop', () => { console.log('in') });
     if (stream !== undefined && stream !== null) {
       let streamArr = stream.getTracks();
       for(let i = 0; i < streamArr.length; i++) {
         streamArr[i].stop();
       }
+      videoPlayer.srcObject = null;
     }
-
-    navigator.mediaDevices.getUserMedia({video: { deviceId: { exact: cameraId } }})
-    .then(function(stream) {
-      videoPlayer.srcObject = stream;
-      // videoPlayer.style.display = 'block';
-      videoPlayer.play();
-      setInitializeDone(true);
-    })
-    .catch(function(err) {
-      // imagePickerArea.style.display = 'block';
-      console.log('err =======> ', err);
-    });
+// console.log('in ========> ', cameraId);
+    setTimeout(() => {
+      navigator.mediaDevices.getUserMedia({video: { deviceId: { exact: cameraId } }})
+      .then(function(stream) {
+        videoPlayer.srcObject = stream;
+        videoPlayer.style.display = 'block';
+        cameraLoader.style.display = 'none';
+        errorInAccess.style.display = 'none';
+        videoPlayer.play();
+        setInitializeDone(true);
+      })
+      .catch(function(err) {
+        // imagePickerArea.style.display = 'block';
+        // console.log('err =======> ', err);
+        errorInAccess.style.display = 'block';
+        cameraLoader.style.display = 'none';
+        videoPlayer.style.display = 'none';
+      });
+    }, 1000);
+    
   }
 
   const initializeMedia = () => {
@@ -79,15 +94,19 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
     }
   
     var cameraDeviceIds: any = [];
+    var backCameraId: any = null;
     var cameraObj: any = {};
     navigator.mediaDevices.enumerateDevices().then(function (devices) {
       devices.forEach(function (device, index) {
         if (device.kind === 'videoinput') {
           cameraDeviceIds.push(device.deviceId)
           cameraObj = { ...cameraObj, [device.deviceId]: device.label };
+          if (device.label.indexOf("back") !== -1 && backCameraId === null) {
+            backCameraId = device.deviceId;
+          }
         }
         if(index + 1 === devices.length){
-          setCameraId(cameraDeviceIds[0]);
+          setCameraId(backCameraId !== null ? backCameraId : cameraDeviceIds[0]);
           setCameraArr(cameraObj);
         }
       });
@@ -138,14 +157,16 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
       <Modal.Body>
         {Object.keys(cameraArr).length > 0 ? (
           <>
-            <select className="w-100 mb-4"  onChange={(event) => setCameraId(event.target.value)}>
-              {Object.keys(cameraArr).map((key) => <option value={key}>{cameraArr[key]}</option>)}
+            <select className="w-100 mb-4" onChange={(event) => setCameraId(event.target.value)}>
+              {Object.keys(cameraArr).map((key) => <option selected={key === cameraId} value={key}>{cameraArr[key]}</option>)}
             </select>
           </>
         ) : (
           <></>
         )}
         <video autoPlay id="player" />
+        <div id="cameraLoader" className="loaderBox" style={{ "paddingTop": "130px" }}><div className="loader"></div></div>
+        <div id="errorInAccess" className="loaderBox">Not Able to gain Access try with different camera from list or try after some time.</div>
         <canvas id="canvas" width="600" height="500" style={{ "visibility": "hidden", "position": "absolute", "top": "0px", "right": "0px" }} />
       </Modal.Body>
     </Modal>
