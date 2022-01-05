@@ -286,53 +286,41 @@ function App() {
   return (
     <BrowserRouter>
       <div className="">
-
-        
-
-
         {loading ? (
           <div className="loaderBox"><div className="loader"></div></div>
         ) : (
           <>
-
-
- {mobileNumber !== '' ? <Navbar collapseOnSelect expand="md" bg="light" variant="light" className="bg-white mb-4 shadow-sm">
-          <Container>
-            <Navbar.Brand href="#home">
-              <Link to="/">
-                <img src={logo} alt="logo" />
-              </Link>
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            <Navbar.Collapse className="justify-content-end" id="responsive-navbar-nav">
-              <Nav>
-                <Nav.Link className="p-0 px-2">
-                  <Link to="/checkout" className="position-relative">
-                    <img src={cartLogo} alt="cart-logo" />
-                    <div className="cartCount">{getCartCount(rootState)}</div>
+            {mobileNumber !== '' ? <Navbar collapseOnSelect expand="md" bg="light" variant="light" className="bg-white mb-4 shadow-sm">
+              <Container>
+                <Navbar.Brand href="#home">
+                  <Link to="/">
+                    <img src={logo} alt="logo" />
                   </Link>
-                </Nav.Link>
-                <Nav.Link href={`/${userId}/order-list`} className="p-0 px-2">
-                  Order List
-                </Nav.Link>
-                <div className="buttonBox">
-                      { installable && <Button variant="primary" size="sm" className="border-0 mx-2" onClick={handleInstallClick}>
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                <Navbar.Collapse className="justify-content-end" id="responsive-navbar-nav">
+                  <Nav>
+                    <Nav.Link className="p-0 px-2">
+                      <Link to="/checkout" className="position-relative">
+                        <img src={cartLogo} alt="cart-logo" />
+                        <div className="cartCount">{getCartCount(rootState)}</div>
+                      </Link>
+                    </Nav.Link>
+                    <Nav.Link href={`/${userId}/order-list`} className="p-0 px-2">
+                      Order List
+                    </Nav.Link>
+                    <div className="buttonBox">
+                      {installable && <Button variant="primary" size="sm" className="border-0 mx-2" onClick={handleInstallClick}>
                         Install me
-                      </Button> }
-                    {/* {installable &&
-                      <button className="install-button" onClick={handleInstallClick}>
-                        Install me
-                      </button>
-                    } */}
-                    <Button variant="secondary" size="sm" className="border-0 mx-2" disabled={isNotyDisable} onClick={askForNotificationPermission}>
-                      Enable notification
-                    </Button>
-                </div>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar> : <></>}
-           
+                      </Button>}
+                      <Button variant="secondary" size="sm" className="border-0 mx-2" disabled={isNotyDisable} onClick={askForNotificationPermission}>
+                        Enable notification
+                      </Button>
+                    </div>
+                  </Nav>
+                </Navbar.Collapse>
+              </Container>
+            </Navbar> : <></>}
             <Switch>
               <Route path="/checkout" render={() => mobileNumber !== '' ? <Checkout /> : <Login />} />
               <Route path={'/:userId/order-list'} render={() => mobileNumber !== '' ? <OrderList /> : <Login />} />
@@ -340,7 +328,6 @@ function App() {
             </Switch>
           </>
         )}
-
         {/* {showInstallVersion ? (
           <button className="install-button" onClick={installServiceWorker}>
             New Update Found in App are you want to install
