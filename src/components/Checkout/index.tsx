@@ -49,7 +49,7 @@ const Checkout = (): JSX.Element => {
         address: cartInfo.address
       }
 
-      fetch(`http://localhost:8080/v1/user/${userId}/order`, {
+      fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user/${userId}/order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

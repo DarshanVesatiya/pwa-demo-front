@@ -36,7 +36,7 @@ const OrderList = (): JSX.Element => {
 
   const fetchOrderList = () => {
     try {
-      fetch(`http://localhost:8080/v1/user/${userId}/order-list`)
+      fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user/${userId}/order-list`)
         .then((response) => response.json())
         .then((...data: any) => {
           setOrderList(data[0].Data);

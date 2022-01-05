@@ -87,7 +87,7 @@ function App() {
   }, []);
 
   const getSubscription = (id: any) => {
-    fetch(`http://localhost:8080/v1/user/${id}/subscription`)
+    fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user/${id}/subscription`)
       .then((response) => response.json())
       .then((...data: any) => {
         if (data[0].Data['userId']) {
@@ -122,7 +122,7 @@ function App() {
 
   const fetchList = () => {
     try {
-      fetch('http://localhost:8080/v1/items')
+      fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/items`)
         .then((response) => response.json())
         .then((...data: any) => {
           dispatch(addList({ items: data[0].Data }));
@@ -221,7 +221,7 @@ function App() {
       })
       .then((newSub) => {
         if (newSubFlag) {
-          fetch(`http://localhost:8080/v1/user/${userId}/subscription`, {
+          fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user/${userId}/subscription`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

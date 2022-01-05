@@ -131,7 +131,7 @@ self.addEventListener('sync', (event: any) => {
             address: syncData[0].info.address
           }
 
-          fetch(`http://localhost:8080/v1/user/${syncData[0].info.userId}/order`, {
+          fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user/${syncData[0].info.userId}/order`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

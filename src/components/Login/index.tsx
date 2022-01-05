@@ -30,7 +30,7 @@ const Login = () => {
       };
 
       // add user data
-      fetch('http://localhost:8080/v1/user', {
+      fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ const Login = () => {
           getNotificationInfo().then((data) => {
             // add notification data
             if (data !== undefined) {
-              fetch(`http://localhost:8080/v1/${data[0].Data._id}/notification`, {
+              fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/${data[0].Data._id}/notification`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
