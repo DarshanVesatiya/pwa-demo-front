@@ -71,7 +71,7 @@ const Checkout = (): JSX.Element => {
       })
       .catch(() => {
         // issue with place order show error toast
-        toast.success('Issue In Placing Order!');
+        toast.error('Issue In Placing Order!');
       });
     }
   }

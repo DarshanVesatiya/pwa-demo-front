@@ -37,15 +37,17 @@ function App() {
 
   const [installable, setInstallable] = useState(false);
   const [isNotyDisable, setIsNotyDisable] = useState(false);
-  const channel = new BroadcastChannel('sw-messages');
-  channel.addEventListener('message', event => {
-    dispatch(resetCart());
-    //  if (localStorage.getItem('orderplaced') !== null) {
-    //   localStorage.removeItem('orderplaced');
-    //   toast.success('Order Placed Successfully');
-    //  }
-  });
 
+  if (BroadcastChannel !== undefined) {
+    const channel = new BroadcastChannel('sw-messages');
+    channel.addEventListener('message', event => {
+      dispatch(resetCart());
+      //  if (localStorage.getItem('orderplaced') !== null) {
+      //   localStorage.removeItem('orderplaced');
+      //   toast.success('Order Placed Successfully');
+      //  }
+    });
+  }
 
   useEffect(() => {
     fetchList();
@@ -84,6 +86,15 @@ function App() {
         window.location.reload();
       }
     );
+
+    // window.addEventListener('storage', (event) => {
+    //   const data = window.localStorage.getItem("sw-messages");
+    //   if (data !== null) {
+    //     window.localStorage.removeItem("sw-messages");
+    //     dispatch(resetCart());
+    //     toast.success('Order Placed Successfully');
+    //   }
+    //  });
   }, []);
 
   const getSubscription = (id: any) => {

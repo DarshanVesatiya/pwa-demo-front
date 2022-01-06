@@ -145,10 +145,15 @@ self.addEventListener('sync', (event: any) => {
             deleteSyncCartItem(syncData[0].cartId);
 
             // delete cart
-            const channel = new BroadcastChannel('sw-messages');
-            channel.postMessage({
-              msg: 'orderplaced'
-            });
+            // window.localStorage.setItem("sw-messages", "true");
+            // window.dispatchEvent( new Event('storage') )
+            if (BroadcastChannel !== undefined) {
+              const channel = new BroadcastChannel('sw-messages');
+              channel.postMessage({
+                msg: 'orderplaced'
+              });
+            }
+            
             getCartItems().then((data) => {
               if(data.length) {
                 data.forEach((item) => {
