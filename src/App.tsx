@@ -38,6 +38,14 @@ function App() {
   const [installable, setInstallable] = useState(false);
   const [isNotyDisable, setIsNotyDisable] = useState(false);
 
+  window.addEventListener('offline', function() {
+    alert('You have lost internet access!');
+  });
+  
+  window.addEventListener('online', function() {
+    alert('You have lost internet access!');
+  });
+
   try {
     const channel = new BroadcastChannel('sw-messages');
     channel.addEventListener('message', event => {
