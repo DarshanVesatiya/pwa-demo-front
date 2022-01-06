@@ -31,32 +31,37 @@ function App() {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const [showInstallVersion, setShowInstallVersion] = useState(false);
+  const cartInfo = useAppSelector((state) => state.cart);
   const mobileNumber = useAppSelector((state) => state.user.mobileNumber);
   const userId = useAppSelector((state) => state.user._id);
   const rootState = useAppSelector((state) => state);
 
+
   const [installable, setInstallable] = useState(false);
   const [isNotyDisable, setIsNotyDisable] = useState(false);
 
-  window.addEventListener('offline', function() {
-    alert('You have lost internet access!');
-  });
+  // window.addEventListener('offline', function() {
+  //   alert('You have lost internet access!');
+  // });
   
-  window.addEventListener('online', function() {
-    alert('You have lost internet access!');
-  });
+  // window.addEventListener('online', function() {
+  //   alert('You have lost internet access!');
+  // });
 
   try {
     const channel = new BroadcastChannel('sw-messages');
     channel.addEventListener('message', event => {
-      dispatch(resetCart());
-      //  if (localStorage.getItem('orderplaced') !== null) {
-      //   localStorage.removeItem('orderplaced');
+      // console.log('get message', localStorage.getItem('orderMesage'));
+      // if (localStorage.getItem('orderMesage') !== null) {
+      //   console.log('in');
       //   toast.success('Order Placed Successfully');
-      //  }
+      //   localStorage.removeItem('orderMesage');
+      // }
+
+      dispatch(resetCart());
     });
   } catch (error) {
-    
+    console.log('error in brodcast ======> ', error);
   }
 
   useEffect(() => {

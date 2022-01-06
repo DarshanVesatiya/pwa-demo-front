@@ -8,6 +8,7 @@ import { getCartItems, deleteCartItem, addSyncUpdateCartItems } from '../../util
 import { Button } from "react-bootstrap";
 
 const Checkout = (): JSX.Element => {
+  const [orderSubmitting, setOrderSubmitting] = useState(false);
   const [show, setShow] = useState(false);
   const cartInfo = useAppSelector((state) => state.cart);
   const cartLoading = useAppSelector((state) => state.cart.loading);
@@ -18,12 +19,27 @@ const Checkout = (): JSX.Element => {
 
   const dispatch = useAppDispatch();
 
+  try {
+    const channel = new BroadcastChannel('sw-messages');
+    channel.addEventListener('message', event => {
+      setOrderSubmitting(false);
+    });
+  } catch (error) {
+    
+  }
+
   const completeCheckout = () => {
     if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      if (!navigator.onLine) {
+        toast.info('You Are offline so Order Send for Sync');
+      } else {
+        toast.success('Order Placed Successfully');
+        setOrderSubmitting(true);
+      }
+      // localStorage.setItem('orderMesage', '1');
       addSyncUpdateCartItems('1', { cartId: 1, info: {userId: userId, ...cartInfo} }).then(() => {
         navigator.serviceWorker.ready.then((registration: any) => {
           registration.sync.register('sync-cart');
-          toast.info('Order Send for Sync');
           dispatch(resetCart());
           getCartItems().then((data) => {
             if(data.length) {
@@ -35,44 +51,51 @@ const Checkout = (): JSX.Element => {
         })
       });
     } else {
-      let itemsArr: any = [];
-      cartInfo.items.map((ele) => {
-        itemsArr.push({
-          itemId: ele.itemId,
-          quantity: ele.qty
+      if (navigator.onLine) {
+        setOrderSubmitting(true);
+        let itemsArr: any = [];
+        cartInfo.items.map((ele) => {
+          itemsArr.push({
+            itemId: ele.itemId,
+            quantity: ele.qty
+          });
         });
-      });
-      const data = {
-        items: itemsArr,
-        totalAmount: cartInfo.totalAmount,
-        status: "Accepted",
-        address: cartInfo.address
-      }
+        const data = {
+          items: itemsArr,
+          totalAmount: cartInfo.totalAmount,
+          status: "Accepted",
+          address: cartInfo.address
+        }
 
-      fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user/${userId}/order`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(data),
-      }).
-      then((response) => response.json())
-      .then(() => {
-        dispatch(resetCart());
-        getCartItems().then((data) => {
-          if(data.length) {
-            data.forEach((item) => {
-              deleteCartItem(item.itemId);
-            });
-          }
+        fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user/${userId}/order`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(data),
+        }).
+        then((response) => response.json())
+        .then(() => {
+          dispatch(resetCart());
+          getCartItems().then((data) => {
+            if(data.length) {
+              data.forEach((item) => {
+                deleteCartItem(item.itemId);
+              });
+            }
+          });
+          setOrderSubmitting(false);
+          toast.success('Order Placed Successfully');
+        })
+        .catch(() => {
+          setOrderSubmitting(false);
+          // issue with place order show error toast
+          toast.error('Issue In Placing Order try after some time!');
         });
-        toast.success('Order Placed Successfully');
-      })
-      .catch(() => {
-        // issue with place order show error toast
-        toast.error('Issue In Placing Order!');
-      });
+      } else {
+        toast.error('You are offline not able to submit order try when you appear onnline!');
+      }
     }
   }
   
@@ -265,14 +288,18 @@ const Checkout = (): JSX.Element => {
                                     <i className="ri-save-line mr-2"></i>Update Cart
                                   </button> */}
                                   {cartAddress !== '' ? (
+
                                     <Button
                                       variant="success"
                                       size="sm"
-                                      
-                                      onClick={completeCheckout}
+                                      onClick={() => { if (!orderSubmitting) { completeCheckout() } }}
                                     >
+                                      {orderSubmitting ? (
+                                        <>
+                                          <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                                        </>
+                                      ) : <></>}
                                       Complete Payment
-                                      <i className="ri-arrow-right-line ml-2"></i>
                                     </Button>
                                   ) : (
                                     <Button
@@ -281,7 +308,6 @@ const Checkout = (): JSX.Element => {
                                       disabled
                                     >
                                       Complete Payment
-                                      <i className="ri-arrow-right-line ml-2"></i>
                                     </Button>
                                   )}
                                   
