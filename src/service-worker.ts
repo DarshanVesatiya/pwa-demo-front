@@ -147,11 +147,13 @@ self.addEventListener('sync', (event: any) => {
             // delete cart
             // window.localStorage.setItem("sw-messages", "true");
             // window.dispatchEvent( new Event('storage') )
-            if (BroadcastChannel !== undefined) {
+            try {
               const channel = new BroadcastChannel('sw-messages');
               channel.postMessage({
                 msg: 'orderplaced'
               });
+            } catch (error) {
+              
             }
             
             getCartItems().then((data) => {

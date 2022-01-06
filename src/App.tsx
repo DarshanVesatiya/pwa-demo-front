@@ -38,7 +38,7 @@ function App() {
   const [installable, setInstallable] = useState(false);
   const [isNotyDisable, setIsNotyDisable] = useState(false);
 
-  if (BroadcastChannel !== undefined) {
+  try {
     const channel = new BroadcastChannel('sw-messages');
     channel.addEventListener('message', event => {
       dispatch(resetCart());
@@ -47,6 +47,8 @@ function App() {
       //   toast.success('Order Placed Successfully');
       //  }
     });
+  } catch (error) {
+    
   }
 
   useEffect(() => {
