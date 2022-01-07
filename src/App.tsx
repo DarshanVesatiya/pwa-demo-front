@@ -64,6 +64,27 @@ function App() {
     console.log('error in brodcast ======> ', error);
   }
 
+  const sendMessage = () => {
+    // send message from react
+    try {
+      navigator.serviceWorker.controller?.postMessage({ type: 'MSG_ID' });
+    } catch (error) {
+      console.log('error 1 ==========> ', error);
+    }
+  }
+
+  useEffect(() => {
+    // get message in react
+    try {
+      navigator.serviceWorker.onmessage = (event) => {
+        console.log('event ============#####> ', event, event.data);
+      };
+    } catch (error) {
+      console.log('error 2 ==========> ', error);
+    }
+    
+  }, []);
+
   useEffect(() => {
     fetchList();
     getUser();
@@ -362,6 +383,7 @@ function App() {
           <></>
         )} */}
       </div>
+      <button onClick={sendMessage}>SendMessage</button>
       <ToastContainer
         position="top-right"
         autoClose={5000}

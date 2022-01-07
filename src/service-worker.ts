@@ -92,10 +92,32 @@ registerRoute(
   })
 );
 
+addEventListener('fetch', (event: any) => {
+  event.waitUntil(async function() {
+    // Exit early if we don't have access to the client.
+    // Eg, if it's cross-origin.
+    console.log('event.clientId ============> ', event.clientId, self.clients);
+    if (!event.clientId) return;
+
+    // Get the client.
+    const client = await self.clients.get(event.clientId);
+    // Exit early if we don't get the client.
+    // Eg, if it closed.
+    if (!client) return;
+
+    // Send a message to the client.
+    client.postMessage({
+      msg: "Hey I just got a fetch from you!",
+      url: event.request.url
+    });
+
+  }());
+});
+
 // This allows the web app to trigger skipWaiting via
-// registration.waiting.postMessage({type: 'SKIP_WAITING'})
+// get message in service worker
 self.addEventListener('message', (event) => {
-  // console.log('event =============$$$$$> ', event);
+  console.log('event =============$$$$$> ', event, event.data);
   if (event.data && event.data === 'SKIP_WAITING') {
     self.skipWaiting();
   }
