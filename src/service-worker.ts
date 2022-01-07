@@ -116,7 +116,7 @@ addEventListener('fetch', (event: any) => {
 
 // This allows the web app to trigger skipWaiting via
 // get message in service worker
-self.addEventListener('message', (event) => {
+addEventListener('message', (event) => {
   console.log('event =============$$$$$> ', event, event.data);
   if (event.data && event.data === 'SKIP_WAITING') {
     self.skipWaiting();
