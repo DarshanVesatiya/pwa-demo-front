@@ -63,26 +63,47 @@ function App() {
   } catch (error) {
     console.log('error in brodcast ======> ', error);
   }
-
+  const messageChannel = new MessageChannel();
   const sendMessage = () => {
-    // send message from react
-    try {
-      navigator.serviceWorker.controller?.postMessage({ type: 'MSG_ID' });
-    } catch (error) {
-      console.log('error 1 ==========> ', error);
-    }
+    // send message from react using client
+    // try {
+    //   navigator.serviceWorker.controller?.postMessage({ type: 'MSG_ID' });
+    // } catch (error) {
+    //   console.log('error 1 ==========> ', error);
+    // }
   }
 
   useEffect(() => {
-    // get message in react
+    // get message in react using client not supported in safari
+    // try {
+    //   navigator.serviceWorker.onmessage = (event) => {
+    //     console.log('event ============#####> ', event, event.data);
+    //   };
+    // } catch (error) {
+    //   console.log('error 2 ==========> ', error);
+    // }
+    
     try {
-      navigator.serviceWorker.onmessage = (event) => {
-        console.log('event ============#####> ', event, event.data);
+      console.log('inside effect');
+      // send message from react using message channel
+      try {
+        navigator.serviceWorker.controller?.postMessage({type: 'PORT_INITIALIZATION'}, [
+          messageChannel.port2,
+        ]);
+      } catch (error) {
+        console.log('error 1 ==========> ', error);
+      }
+      messageChannel.port1.onmessage = (event) => {
+        console.log('messageChannel ==========> ', event);
+        // Process message
+      };
+      messageChannel.port1.onmessageerror = (event) => {
+        console.log('messageChannelError ==========> ', event);
+        // Process message
       };
     } catch (error) {
       console.log('error 2 ==========> ', error);
     }
-    
   }, []);
 
   useEffect(() => {

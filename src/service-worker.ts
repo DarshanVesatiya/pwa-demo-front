@@ -18,6 +18,7 @@ import { resetCart } from "./redux/cartSlice";
 import { useAppDispatch } from "./redux/hooks";
 import { deleteSyncCartItem, getSyncCartItems, getCartItems, deleteCartItem } from './utility';
 
+let communicationPort: any;
 declare const self: ServiceWorkerGlobalScope;
 
 clientsClaim();
@@ -93,6 +94,10 @@ registerRoute(
 );
 
 addEventListener('fetch', (event: any) => {
+  console.log('communicationPort ==========> ', communicationPort);
+  if (communicationPort !== undefined) {
+    communicationPort.postMessage({type: 'MSG_ID'});
+  }
   event.waitUntil(async function() {
     // Exit early if we don't have access to the client.
     // Eg, if it's cross-origin.
@@ -117,7 +122,11 @@ addEventListener('fetch', (event: any) => {
 // This allows the web app to trigger skipWaiting via
 // get message in service worker
 addEventListener('message', (event) => {
-  console.log('event =============$$$$$> ', event, event.data);
+  console.log('event =============$$$$$> ', event, event.data, event?.ports);
+  if (event.data && event.data.type === 'PORT_INITIALIZATION') {
+    communicationPort = event.ports[0];
+  }
+
   if (event.data && event.data === 'SKIP_WAITING') {
     self.skipWaiting();
   }
