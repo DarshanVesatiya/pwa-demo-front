@@ -33,7 +33,7 @@ const Checkout = (): JSX.Element => {
       if (!navigator.onLine) {
         toast.info('You Are offline so Order Send for Sync');
       } else {
-        toast.success('Order Placed Successfully');
+        toast.info('Order Send for Sync');
         setOrderSubmitting(true);
       }
       // localStorage.setItem('orderMesage', '1');
