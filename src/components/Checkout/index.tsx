@@ -53,51 +53,70 @@ const Checkout = (): JSX.Element => {
         })
       });
     } else {
-      if (Online) {
-        setOrderSubmitting(true);
-        let itemsArr: any = [];
-        cartInfo.items.map((ele) => {
-          itemsArr.push({
-            itemId: ele.itemId,
-            quantity: ele.qty
-          });
-        });
-        const data = {
-          items: itemsArr,
-          totalAmount: cartInfo.totalAmount,
-          status: "Accepted",
-          address: cartInfo.address
-        }
-
-        fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user/${userId}/order`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(data),
-        }).
-        then((response) => response.json())
-        .then(() => {
-          dispatch(resetCart());
-          getCartItems().then((data) => {
-            if(data.length) {
-              data.forEach((item) => {
-                deleteCartItem(item.itemId);
-              });
-            }
-          });
-          setOrderSubmitting(false);
-          toast.success('Order Placed Successfully');
-        })
-        .catch(() => {
-          setOrderSubmitting(false);
-          // issue with place order show error toast
-          toast.error('Issue In Placing Order try after some time!');
-        });
-      } else {
+      setOrderSubmitting(true);
+      var xhr = new XMLHttpRequest();
+      xhr.onerror = () => {
+        setOrderSubmitting(false);
         toast.error('You are offline not able to submit order try when you appear onnline!');
-      }
+      };
+      xhr.ontimeout = () => {
+        setOrderSubmitting(false);
+        toast.error('You are offline not able to submit order try when you appear onnline!');
+      };
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === xhr.HEADERS_RECEIVED) {
+          if (xhr.status) {
+            setOrderSubmitting(true);
+            let itemsArr: any = [];
+            cartInfo.items.map((ele) => {
+              itemsArr.push({
+                itemId: ele.itemId,
+                quantity: ele.qty
+              });
+            });
+            const data = {
+              items: itemsArr,
+              totalAmount: cartInfo.totalAmount,
+              status: "Accepted",
+              address: cartInfo.address
+            }
+
+            fetch(`${process.env.REACT_APP_API_ENDPOINT}v1/user/${userId}/order`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify(data),
+            }).
+            then((response) => response.json())
+            .then(() => {
+              dispatch(resetCart());
+              getCartItems().then((data) => {
+                if(data.length) {
+                  data.forEach((item) => {
+                    deleteCartItem(item.itemId);
+                  });
+                }
+              });
+              setOrderSubmitting(false);
+              toast.success('Order Placed Successfully');
+            })
+            .catch(() => {
+              setOrderSubmitting(false);
+              // issue with place order show error toast
+              toast.error('Issue In Placing Order try after some time!');
+            });
+          } else {
+            setOrderSubmitting(false);
+            toast.error('You are offline not able to submit order try when you appear onnline!');
+          }
+        }
+      };
+
+      xhr.open("GET", "https://httpbin.org/get");
+      xhr.timeout = 5000;
+      xhr.send();
     }
   }
   
