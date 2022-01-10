@@ -147,7 +147,7 @@ self.addEventListener('sync', (event: any) => {
       getSyncCartItems().then((syncData: any) => {
         console.log('syncData =========> ', syncData);
 
-        if (syncData.length === 1) {
+        if (syncData.length) {
           let itemsArr: any = [];
           syncData[0].info.items.map((ele: any) => {
             itemsArr.push({

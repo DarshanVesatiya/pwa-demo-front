@@ -30,14 +30,15 @@ const Checkout = (): JSX.Element => {
 
   const completeCheckout = () => {
     if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      if (!navigator.onLine) {
-        toast.info('You Are offline so Order Send for Sync');
-      } else {
-        toast.info('Order Send for Sync');
-        setOrderSubmitting(true);
-      }
+      // if (!navigator.onLine) {
+      //   toast.info('You Are offline so Order Send for Sync');
+      // } else {
+      //   toast.info('Order Send for Sync');
+      //   setOrderSubmitting(true);
+      // }
       // localStorage.setItem('orderMesage', '1');
       addSyncUpdateCartItems('1', { cartId: 1, info: {userId: userId, ...cartInfo} }).then(() => {
+        toast.info('Order Send for Sync');
         navigator.serviceWorker.ready.then((registration: any) => {
           registration.sync.register('sync-cart');
           dispatch(resetCart());
