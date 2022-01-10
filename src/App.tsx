@@ -116,34 +116,35 @@ function App() {
       // toast.success('Address added for delivery');
     }
 
-    navigator.serviceWorker.getRegistration().then((registration: any) => {
-      // setRegistrationConst(registration);
-      // if (registration) { // if there is a SW active
-      // console.log('registration =========> ', registration);
-      if (!registration) return;
-      if (registration.waiting) return setShowInstallVersion(true);
-      if (registration.installing) updateStateMessage(registration);
-      registration.addEventListener('updatefound', () => setShowInstallVersion(true));
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistration().then((registration: any) => {
+        // setRegistrationConst(registration);
+        // if (registration) { // if there is a SW active
+        // console.log('registration =========> ', registration);
+        if (!registration) return;
+        if (registration.waiting) return setShowInstallVersion(true);
+        if (registration.installing) updateStateMessage(registration);
+        registration.addEventListener('updatefound', () => setShowInstallVersion(true));
 
-      function updateStateMessage(reg: any) {
-        reg.installing.addEventListener('statechange', function (event: any) {
-          // console.log('event ========> ', event, registration.installed);
-          if (registration.installed) setShowInstallVersion(true);
-        });
-      }
-      // }
-    });
+        function updateStateMessage(reg: any) {
+          reg.installing.addEventListener('statechange', function (event: any) {
+            // console.log('event ========> ', event, registration.installed);
+            if (registration.installed) setShowInstallVersion(true);
+          });
+        }
+        // }
+      });
 
-    var refreshing: boolean = false;
-    navigator.serviceWorker.addEventListener('controllerchange',
-      function () {
-        console.log('controller changes');
-        if (refreshing) return;
-        refreshing = true;
-        window.location.reload();
-      }
-    );
-
+      var refreshing: boolean = false;
+      navigator.serviceWorker.addEventListener('controllerchange',
+        function () {
+          console.log('controller changes');
+          if (refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        }
+      );
+    }
     // window.addEventListener('storage', (event) => {
     //   const data = window.localStorage.getItem("sw-messages");
     //   if (data !== null) {
@@ -342,14 +343,14 @@ function App() {
     });
   };
 
-  const installServiceWorker = () => {
-    setShowInstallVersion(false);
-    navigator.serviceWorker.getRegistration().then((registration: any) => {
-      if (registration !== null) {
-        registration.waiting.postMessage('SKIP_WAITING');
-      }
-    });
-  }
+  // const installServiceWorker = () => {
+  //   setShowInstallVersion(false);
+  //   navigator.serviceWorker.getRegistration().then((registration: any) => {
+  //     if (registration !== null) {
+  //       registration.waiting.postMessage('SKIP_WAITING');
+  //     }
+  //   });
+  // }
 
   return (
     <BrowserRouter>
