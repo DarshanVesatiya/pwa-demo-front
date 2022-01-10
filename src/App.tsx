@@ -63,7 +63,7 @@ function App() {
   } catch (error) {
     console.log('error in brodcast ======> ', error);
   }
-  const messageChannel = new MessageChannel();
+  // const messageChannel = new MessageChannel();
   const sendMessage = () => {
     // send message from react using client
     // try {
@@ -83,27 +83,27 @@ function App() {
     //   console.log('error 2 ==========> ', error);
     // }
     
-    try {
-      console.log('inside effect');
-      // send message from react using message channel
-      try {
-        navigator.serviceWorker.controller?.postMessage({type: 'PORT_INITIALIZATION'}, [
-          messageChannel.port2,
-        ]);
-      } catch (error) {
-        console.log('error 1 ==========> ', error);
-      }
-      messageChannel.port1.onmessage = (event) => {
-        console.log('messageChannel ==========> ', event);
-        // Process message
-      };
-      messageChannel.port1.onmessageerror = (event) => {
-        console.log('messageChannelError ==========> ', event);
-        // Process message
-      };
-    } catch (error) {
-      console.log('error 2 ==========> ', error);
-    }
+    // try {
+    //   console.log('inside effect');
+    //   // send message from react using message channel
+    //   try {
+    //     navigator.serviceWorker.controller?.postMessage({type: 'PORT_INITIALIZATION'}, [
+    //       messageChannel.port2,
+    //     ]);
+    //   } catch (error) {
+    //     console.log('error 1 ==========> ', error);
+    //   }
+    //   messageChannel.port1.onmessage = (event) => {
+    //     console.log('messageChannel ==========> ', event);
+    //     // Process message
+    //   };
+    //   messageChannel.port1.onmessageerror = (event) => {
+    //     console.log('messageChannelError ==========> ', event);
+    //     // Process message
+    //   };
+    // } catch (error) {
+    //   console.log('error 2 ==========> ', error);
+    // }
   }, []);
 
   useEffect(() => {
@@ -404,7 +404,7 @@ function App() {
           <></>
         )} */}
       </div>
-      <button onClick={sendMessage}>SendMessage</button>
+      {/* <button onClick={sendMessage}>SendMessage</button> */}
       <ToastContainer
         position="top-right"
         autoClose={5000}
