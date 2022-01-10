@@ -130,11 +130,11 @@ export const Camera = ({ show, setShow }: { show: boolean, setShow: any }) => {
         if (address !== null) {
           dispatch(updateAddress({ address: address.replace(/_/g, ' ') }));
           setShow(false);
-          toast.success('Address Fetch Successfully');
+          toast.success('Address fetch successfully.');
         }
       } else {
         // error in getting address
-        toast.error('Address Fetch Successfully');
+        toast.error('Issue in address fetching!');
       }
     }
   }

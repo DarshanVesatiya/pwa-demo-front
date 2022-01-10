@@ -66,7 +66,7 @@ export const cartSlice = createSlice({
         deleteCartItem(item.itemId);
         addUpdateCartItems(item.itemId, item);
       });
-      toast.success('Item Added in Cart');
+      toast.success('Item added in cart!');
     },
     deleteCart: (state, action: PayloadAction<{_id: string}>) => {
       let currentState = JSON.parse(JSON.stringify(current(state)));
@@ -85,7 +85,7 @@ export const cartSlice = createSlice({
       state.totalAmount = totalAmount;
       state.items = currentState.items;
       deleteCartItem(_id);
-      toast.success('Item Removed From Cart');
+      toast.success('Item removed from the cart');
     },
     updateAddress: (state, action: PayloadAction<{address: string}>) => {
       // console.log(action.payload.address);

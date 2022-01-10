@@ -23,9 +23,9 @@ const Login = () => {
       formElement.elements['lastName'].value === ''
     ) {
       // show error
-      toast.error('Invalid Data');
+      toast.error('Please provide user details to register!');
     } else if (!formElement.elements['mobileNumber'].value.match(phoneno)) {
-      toast.error('Enter Valid Phone Number!');
+      toast.error('Please provide valid phone number!');
     } else {
       if (navigator.onLine) {
         let userData = {
@@ -49,7 +49,7 @@ const Login = () => {
           setOrderSubmitting(false);
           if (data[0].Status === 'failure') {
             // show error
-            toast.error('Issue in creating user please try after some time!');
+            toast.error('Something went wrong!');
           } else {
             dispatch(updateInfo({
               ...userData,
@@ -76,7 +76,7 @@ const Login = () => {
                 .then((...data: any) => {
                   if (data[0].Status === 'failure') {
                     // show error
-                    toast.error('Error adding notification settings!');
+                    toast.error('Something went wrong!');
                   } else {
                     deleteNotificationInfo();
                   }
@@ -88,7 +88,7 @@ const Login = () => {
         })
         .catch();
       } else {
-        toast.error('You are offline so not able to register try again when yo get online!');
+        toast.error('Internet connection is required for registration!');
       }
     }
   }

@@ -39,7 +39,7 @@ const Checkout = (): JSX.Element => {
       // }
       // localStorage.setItem('orderMesage', '1');
       addSyncUpdateCartItems('1', { cartId: 1, info: {userId: userId, ...cartInfo} }).then(() => {
-        toast.info('Order Send for Sync');
+        toast.info('Order sent for Sync.');
         navigator.serviceWorker.ready.then((registration: any) => {
           registration.sync.register('sync-cart');
           dispatch(resetCart());
@@ -57,11 +57,11 @@ const Checkout = (): JSX.Element => {
       var xhr = new XMLHttpRequest();
       xhr.onerror = () => {
         setOrderSubmitting(false);
-        toast.error('You are offline not able to submit order try when you appear onnline!');
+        toast.error('Try placing order once you are online!');
       };
       xhr.ontimeout = () => {
         setOrderSubmitting(false);
-        toast.error('You are offline not able to submit order try when you appear onnline!');
+        toast.error('Try placing order once you are online!');
       };
       xhr.onreadystatechange = function () {
         if (xhr.readyState === xhr.HEADERS_RECEIVED) {
@@ -100,16 +100,16 @@ const Checkout = (): JSX.Element => {
                 }
               });
               setOrderSubmitting(false);
-              toast.success('Order Placed Successfully');
+              toast.success('Order placed successfully!');
             })
             .catch(() => {
               setOrderSubmitting(false);
               // issue with place order show error toast
-              toast.error('Issue In Placing Order try after some time!');
+              toast.error('Something went wrong!');
             });
           } else {
             setOrderSubmitting(false);
-            toast.error('You are offline not able to submit order try when you appear onnline!');
+            toast.error('Try placing order once you are online!');
           }
         }
       };
@@ -252,7 +252,7 @@ const Checkout = (): JSX.Element => {
                                                       setShow(true)
                                                     })
                                                     .catch(() => {
-                                                      toast.info('Either you have not provided camera permission or there is any other issue so you have to manually enter address.');
+                                                      toast.info('Please provide camera permission to access QR code scanning!');
                                                     });
                                                   }}
                                                   id="button-addonTags"
